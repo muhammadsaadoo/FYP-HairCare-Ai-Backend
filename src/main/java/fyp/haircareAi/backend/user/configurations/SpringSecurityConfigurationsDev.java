@@ -35,7 +35,7 @@ public class SpringSecurityConfigurationsDev {
                         // Public endpoints accessible without authentication
                         .requestMatchers("/signup/**", "/login").permitAll()
                         // Role-based restrictions
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Only ADMIN can access endpoints under /admin
+                        .requestMatchers("/admin/**","/admin/roles/**").hasRole("ADMIN") // Only ADMIN can access endpoints under /admin
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // USER and ADMIN can access /user
                         // Any other request must be authenticated
                         .anyRequest().authenticated())
