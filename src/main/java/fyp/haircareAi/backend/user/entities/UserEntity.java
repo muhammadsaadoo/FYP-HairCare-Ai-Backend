@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.stereotype.Indexed;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "Users")
 @Data
@@ -19,8 +21,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-
-    private long id;
+    private long UserId;
 
     @Column
     @NonNull
@@ -59,25 +60,57 @@ public class UserEntity {
     private Integer age;
 
 
-    @Column
-    private String hairType;
+
+
+
 
     @Column
-    private String hairIssues;
-
-    @Column
-    private String skinType;
+    private String country;
 
     @Column
     @Enumerated(EnumType.STRING)
     @NonNull
-    private Role role;
+    private Role role=Role.USER;
 
     // Enum to represent user roles
     public enum Role {
         USER,
         ADMIN
     }
+
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    @NonNull
+    private UserType usertype=UserType.Regular;
+
+    // Enum to represent user roles
+    public enum UserType {
+        Regular,
+        Premium
+    }
+
+
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    @NonNull
+    private Status status=Status.InActive;
+
+    // Enum to represent user roles
+    public enum Status {
+        Active,
+        InActive
+    }
+
+    // New fields for timestamps
+    @Column(nullable = true)
+    private LocalDateTime lastLogin;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+
 
 
 

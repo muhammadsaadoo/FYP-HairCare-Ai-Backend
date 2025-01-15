@@ -94,7 +94,7 @@ public class SignupServiceImpl implements SignUpService {
 
             try {
                 user.setPassword(passwordencoder.encode(user.getPassword()));
-                user.setRole(UserEntity.Role.valueOf("USER"));
+
 
                 UserEntity is_add = authRepo.save(user);
 

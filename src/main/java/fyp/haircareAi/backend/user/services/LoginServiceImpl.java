@@ -1,6 +1,7 @@
 package fyp.haircareAi.backend.user.services;
 
 import fyp.haircareAi.backend.user.entities.LoginEntity;
+import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.services.interfaces.LoginService;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -51,6 +53,14 @@ public class LoginServiceImpl implements LoginService {
             String roles = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.joining(","));
+            // Update the user status to Active
+            // Instead of calling the repository twice, combine the status update and user retrieval
+            UserEntity userEntity = authRepo.findByEmail(userDetails.getUsername());
+            if (userEntity != null) {
+                userEntity.setStatus(UserEntity.Status.valueOf("Active"));
+                userEntity.setLastLogin(LocalDateTime.now());// Set the user status to Active
+                authRepo.save(userEntity); // Save the updated user entity with Active status
+            }
 
             // Generate JWT with username and roles
             return  jwtUtil.generateToken(userDetails.getUsername(), roles);

@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +23,10 @@ public class AdminUserService{
         return signUpRepo.findAll();
 
     }
+    public List<UserEntity> getAllAdmins(){
+        return signUpRepo.findByRole(UserEntity.Role.ADMIN);
+
+    }
     public UserEntity findUserByEmail(String email){
         return signUpRepo.findByEmail(email);
 
@@ -28,6 +35,30 @@ public class AdminUserService{
         signUpRepo.delete(user);
 
     }
+    public List<UserEntity> activeUsers() {
+        List<UserEntity> allUsers = getAllUsers(); // Fetch all users
+        List<UserEntity> activeUsers = new ArrayList<>(); // Initialize the active users list
+
+        LocalDateTime currentTime = LocalDateTime.now(); // Current time
+
+        for (UserEntity user : allUsers) {
+            LocalDateTime lastActiveTime = user.getLastLogin(); // Last login timestamp
+
+            if (lastActiveTime != null && Duration.between(lastActiveTime, currentTime).toHours() > 24) {
+                // If the user has been inactive for more than 24 hours
+                user.setStatus(UserEntity.Status.valueOf("InActive"));
+            } else {
+                // If the user is active
+                user.setStatus(UserEntity.Status.valueOf("Active"));
+                activeUsers.add(user); // Add to the active users list
+            }
+
+            signUpRepo.save(user); // Persist changes in the database
+        }
+
+        return activeUsers; // Return the list of active users
+    }
+
 
 //    @Scheduled(cron = "0 0/2 * * * ?")
 //    public void sendEmails(){

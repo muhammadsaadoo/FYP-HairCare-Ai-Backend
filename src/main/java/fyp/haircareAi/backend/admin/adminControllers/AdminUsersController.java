@@ -23,6 +23,16 @@ public class AdminUsersController {
             return "no user found";
         }
     }
+    @GetMapping("/allAdmins")
+    public Object allAdmins() {
+
+        List<UserEntity> entries = adminUserService.getAllAdmins();
+        if ( entries !=null && !entries.isEmpty() ) {
+            return entries;
+        } else {
+            return "no user found";
+        }
+    }
     @GetMapping("/{email}")
     public Object getUserByEmail(@PathVariable String email) {
         UserEntity user = adminUserService.findUserByEmail(email);
@@ -45,12 +55,12 @@ public class AdminUsersController {
         }
         return "no user found";
     }
-//
-//    @GetMapping("/cartUsers")
-//    public List<String> getAllusersofcart() {
-//        return adminUserService.usersWhoCartProducts();
-//
-//    }
+
+    @GetMapping("/activeusers")
+    public List<UserEntity> getAllActiveUsers() {
+        return adminUserService.activeUsers();
+
+    }
 
 
 
