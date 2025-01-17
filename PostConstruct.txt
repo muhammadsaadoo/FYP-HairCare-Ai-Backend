@@ -1,0 +1,7 @@
+post constrruct
+when bean is created of the class and the post construct method invoked
+it is used on the method
+it is usefull for frequently database calls
+load data in spring boot application cache
+for example all users for ADMIN use
+
