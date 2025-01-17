@@ -1,6 +1,7 @@
 package fyp.haircareAi.backend.admin.adminServices;
 
 
+import fyp.haircareAi.backend.admin.cache.UserCache;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
@@ -19,8 +20,18 @@ public class AdminUserService{
     @Autowired
     private AuthRepo signUpRepo;
 
+    @Autowired
+    private UserCache userCache;
+
     public List<UserEntity> getAllUsers(){
-        return signUpRepo.findAll();
+        try {
+
+            userCache.getAllUsers();
+            return userCache.getUsers();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
     public List<UserEntity> getAllAdmins(){
@@ -35,29 +46,43 @@ public class AdminUserService{
         signUpRepo.delete(user);
 
     }
+
+
     public List<UserEntity> activeUsers() {
-        List<UserEntity> allUsers = getAllUsers(); // Fetch all users
-        List<UserEntity> activeUsers = new ArrayList<>(); // Initialize the active users list
+        // Retrieve all users
+        List<UserEntity> users = getAllUsers();
+        List<UserEntity> activeUsers = new ArrayList<>();
+        LocalDateTime currentTime = LocalDateTime.now();
 
-        LocalDateTime currentTime = LocalDateTime.now(); // Current time
+        for (UserEntity user : users) {
+            LocalDateTime lastActiveTime = user.getLastLogin(); // Get the last login timestamp
 
-        for (UserEntity user : allUsers) {
-            LocalDateTime lastActiveTime = user.getLastLogin(); // Last login timestamp
-
-            if (lastActiveTime != null && Duration.between(lastActiveTime, currentTime).toHours() > 24) {
-                // If the user has been inactive for more than 24 hours
-                user.setStatus(UserEntity.Status.valueOf("InActive"));
-            } else {
-                // If the user is active
-                user.setStatus(UserEntity.Status.valueOf("Active"));
-                activeUsers.add(user); // Add to the active users list
+            // Check if the user has been active within the last 24 hours or is explicitly marked as "Active"
+//            if (user.getStatus().equals(UserEntity.Status.Active) &&
+//                    (lastActiveTime != null && Duration.between(lastActiveTime, currentTime).toHours() <= 24)) {
+//                activeUsers.add(user); // Add to active users list
+//            } else {
+//                // Mark user as inactive if not active within 24 hours or not explicitly "Active"
+//                user.setStatus(UserEntity.Status.InActive);
+//            }
+            if(user.getStatus().equals(UserEntity.Status.Active)){
+                activeUsers.add(user);
             }
 
-            signUpRepo.save(user); // Persist changes in the database
+            // Persist changes (status update) in the database
+//            signUpRepo.save(user);
         }
 
-        return activeUsers; // Return the list of active users
+        // Return the list of active users
+        return activeUsers;
     }
+
+
+    public void userDashboard(){
+
+    }
+
+
 
 
 //    @Scheduled(cron = "0 0/2 * * * ?")
