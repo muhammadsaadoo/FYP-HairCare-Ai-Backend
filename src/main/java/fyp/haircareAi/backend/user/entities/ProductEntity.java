@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,30 +21,48 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Long productId;
+    private long productId;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "problem_id", nullable = false)
+    private ProblemEntity problem;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column
     private Double rating;
-    @Column
+
+    @Column(nullable = false)
     private Double price;
 
-    @Column
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer recommendations = 0;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Status status = Status.Available;
+    private Status status;
 
-    @Column
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public enum Status {
         Available, Discontinued
     }
+
+    @JsonIgnore
+    @Column
+    private String imageName;
+
+    @JsonIgnore
+    @Column
+    private String imageType;
+
+    @JsonIgnore
+    @Lob
+    @Column
+    private byte[] imageData;
 }

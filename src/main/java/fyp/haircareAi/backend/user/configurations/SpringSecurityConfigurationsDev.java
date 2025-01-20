@@ -27,25 +27,39 @@ public class SpringSecurityConfigurationsDev {
     @Autowired
     private JwtFilter jwtFilter;
 
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                        // Public endpoints accessible without authentication
-                        .requestMatchers("/signup/**", "/login").permitAll()
-                        // Role-based restrictions
-                        .requestMatchers("/admin/dashboard/usersdashboard/**","/admin/roles/**").hasRole("ADMIN") // Only ADMIN can access endpoints under /admin
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // USER and ADMIN can access /user
-                        // Any other request must be authenticated
-                        .anyRequest().authenticated())
+                        .requestMatchers("/**").permitAll())  // This permits all requests
                 .httpBasic(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable); // Disable CSRF for now
+                .csrf(AbstractHttpConfigurer::disable);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.authorizeHttpRequests(auth -> auth
+//                        // Public endpoints accessible without authentication
+//                        .requestMatchers("/signup/**", "/login").permitAll()
+//                        // Role-based restrictions
+//                        .requestMatchers("/admin/dashboard/usersdashboard/**",
+//                                "/admin/dashboard/productdashboard/**",
+//                                "/admin/roles/**",
+//                                "/insertproduct").hasRole("ADMIN") // Added /insertproduct here
+//                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+//                        // Any other request must be authenticated
+//                        .anyRequest().authenticated())
+//                .httpBasic(Customizer.withDefaults())
+//                .csrf(AbstractHttpConfigurer::disable);
+//
+//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
