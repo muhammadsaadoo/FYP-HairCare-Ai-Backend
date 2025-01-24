@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,12 +40,14 @@ public class LoginServiceImpl implements LoginService {
     private JwtUtil jwtUtil;
 
     @Override
-    public String checkUser(LoginEntity user) {
+    public String checkUser(LoginEntity user){
         try {
             // Authenticate the user
+            System.out.println("Authenticate....................................");
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
             );
+
 
             // Get UserDetails
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -55,11 +58,13 @@ public class LoginServiceImpl implements LoginService {
                     .collect(Collectors.joining(","));
             // Update the user status to Active
             // Instead of calling the repository twice, combine the status update and user retrieval
-            UserEntity userEntity = authRepo.findByEmail(userDetails.getUsername());
-            if (userEntity != null) {
-                userEntity.setStatus(UserEntity.Status.valueOf("Active"));
-                userEntity.setLastLogin(LocalDateTime.now());// Set the user status to Active
-                authRepo.save(userEntity); // Save the updated user entity with Active status
+            Optional<UserEntity> dbuser= authRepo.findByEmail(userDetails.getUsername());
+
+            if(dbuser.isPresent()){
+                UserEntity userr=dbuser.get();
+                userr.setStatus(UserEntity.Status.valueOf("Active"));
+                userr.setLastLogin(LocalDateTime.now());// Set the user status to Active
+                authRepo.save(userr); // Save the updated user entity with Active status
             }
 
             // Generate JWT with username and roles
@@ -69,7 +74,7 @@ public class LoginServiceImpl implements LoginService {
 
         } catch (AuthenticationException e) {
             log.error("Exception occurred while creating authentication token", e);
-            return "Authentication failed: Invalid email or password.";
+            return null;
         }
     }
 }

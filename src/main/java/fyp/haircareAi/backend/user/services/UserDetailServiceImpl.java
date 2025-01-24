@@ -10,15 +10,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private AuthRepo authRepo;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity user= authRepo.findByEmail(email);
+        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
 
-        if(user != null){
+        if(dbuser.isPresent()){
+            UserEntity user=dbuser.get();
             return User
                     .builder()
                     .username(user.getEmail())

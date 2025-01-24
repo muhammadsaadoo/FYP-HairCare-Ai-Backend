@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AssignRolesService {
@@ -15,8 +16,10 @@ public class AssignRolesService {
 
 
     public UserEntity assignAsAdmin(String email){
-        UserEntity user=authRepo.findByEmail(email);
-        if(user != null){
+        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
+
+        if(dbuser.isPresent()){
+            UserEntity user=dbuser.get();
             user.setRole(UserEntity.Role.valueOf("ADMIN"));
            return authRepo.save(user);
         }
@@ -24,8 +27,10 @@ public class AssignRolesService {
     }
 
     public UserEntity deAssignAdmin(String email){
-        UserEntity user=authRepo.findByEmail(email);
-        if(user != null){
+        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
+
+        if(dbuser.isPresent()){
+            UserEntity user=dbuser.get();
             user.setRole(UserEntity.Role.valueOf("USER"));
             return authRepo.save(user);
         }

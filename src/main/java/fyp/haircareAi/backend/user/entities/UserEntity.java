@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -109,6 +110,12 @@ public class UserEntity {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = true)
+    private String imagePath;
+
+
+
 
 
 

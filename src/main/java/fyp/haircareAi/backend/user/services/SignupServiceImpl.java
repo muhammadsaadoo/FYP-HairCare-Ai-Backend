@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.services;
 
+import fyp.haircareAi.backend.user.entities.ProductEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.services.interfaces.SignUpService;
@@ -8,7 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Random;
 
 @Service
@@ -114,4 +117,15 @@ public class SignupServiceImpl implements SignUpService {
 
 
     }
+//    public UserEntity insertUser(UserEntity user, MultipartFile imageFile) throws IOException {
+//        user.setImageName(imageFile.getOriginalFilename());
+//        user.setImageType(imageFile.getContentType());
+//        user.setImageData(imageFile.getBytes());
+//        user.setPassword(passwordencoder.encode(user.getPassword()));
+//
+//
+//        return authRepo.save(user);
+//
+//
+//    }
 }

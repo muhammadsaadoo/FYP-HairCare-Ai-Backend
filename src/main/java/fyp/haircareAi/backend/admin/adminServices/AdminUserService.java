@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,7 +40,9 @@ public class AdminUserService{
 
     }
     public UserEntity findUserByEmail(String email){
-        return signUpRepo.findByEmail(email);
+        Optional<UserEntity> dbuser= signUpRepo.findByEmail(email);
+
+        return dbuser.orElse(null);
 
     }
     public void deleteUser(UserEntity user){

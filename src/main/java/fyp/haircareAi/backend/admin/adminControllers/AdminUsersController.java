@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RequestMapping("/admin/dashboard/usersdashboard")
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 public class AdminUsersController {
     @Autowired
     private AdminUserService adminUserService;
