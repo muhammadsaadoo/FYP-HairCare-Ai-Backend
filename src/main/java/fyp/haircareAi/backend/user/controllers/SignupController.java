@@ -28,7 +28,7 @@ public class SignupController {
 //
 //    }
     @PostMapping
-    public Object verify(@RequestBody UserEntity user){
+    public ResponseEntity<?> verify(@RequestBody UserEntity user){
         return signupService.insertUser(user);
 
     }

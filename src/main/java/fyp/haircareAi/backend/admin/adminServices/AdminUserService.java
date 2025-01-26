@@ -2,12 +2,15 @@ package fyp.haircareAi.backend.admin.adminServices;
 
 
 import fyp.haircareAi.backend.admin.cache.UserCache;
+import fyp.haircareAi.backend.user.entities.BanUserEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
+import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,6 +23,10 @@ import java.util.Optional;
 public class AdminUserService{
     @Autowired
     private AuthRepo signUpRepo;
+
+
+    @Autowired
+    private BanUserRepo banUserRepo;
 
     @Autowired
     private UserCache userCache;
@@ -45,8 +52,21 @@ public class AdminUserService{
         return dbuser.orElse(null);
 
     }
-    public void deleteUser(UserEntity user){
-        signUpRepo.delete(user);
+    @Transactional
+    public boolean deleteUser(UserEntity user){
+        try {
+
+            signUpRepo.delete(user);
+            BanUserEntity banUser=new BanUserEntity();
+            banUser.setEmail(user.getEmail());
+           banUserRepo.save(banUser);
+
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
 
     }
 

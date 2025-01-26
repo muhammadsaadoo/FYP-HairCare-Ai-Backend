@@ -1,10 +1,14 @@
 package fyp.haircareAi.backend.user.services;
 
+import fyp.haircareAi.backend.user.entities.BanUserEntity;
 import fyp.haircareAi.backend.user.entities.ProductEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
+import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.SignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -20,6 +25,9 @@ public class SignupServiceImpl implements SignUpService {
     private AuthRepo authRepo;
     @Autowired
     private EmailServiceImpl emailService;
+
+    @Autowired
+    private BanUserRepo banUserRepo;
 
     private static final PasswordEncoder passwordencoder=new BCryptPasswordEncoder();
     private int verificationCode=0;
@@ -91,27 +99,33 @@ public class SignupServiceImpl implements SignUpService {
             return "Error";
         }
     }
-    public Object insertUser(UserEntity user){
+    public ResponseEntity<?>insertUser(UserEntity user){
 
 
 
             try {
+                Optional<BanUserEntity> isban=banUserRepo.findByEmail(user.getEmail());
+                if(isban.isPresent()){
+//                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();    main
+                    return ResponseEntity
+                            .status(HttpStatus.UNAUTHORIZED)
+                            .body("the Email " + user.getEmail() + " is BAN");
+                }
                 user.setPassword(passwordencoder.encode(user.getPassword()));
 
 
                 UserEntity is_add = authRepo.save(user);
 
-
                 // You can add custom logic if needed
                 if (is_add != null) {
-                    return is_add;
+                    return ResponseEntity.ok(user);
                 } else {
                     // Handle the case where the user could not be added
-                    return "Failed to register user";
+                    return ResponseEntity.internalServerError().build();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                return ResponseEntity.internalServerError().build();
             }
 
 

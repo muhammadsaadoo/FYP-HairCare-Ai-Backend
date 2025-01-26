@@ -34,7 +34,7 @@ public ResponseEntity<?> login(@RequestBody LoginEntity user) {
     }
 
     // Return 401 Unauthorized with no body if the user credentials are invalid
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    return ResponseEntity.notFound().build();
 }
 
 

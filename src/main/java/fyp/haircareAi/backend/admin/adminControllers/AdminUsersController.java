@@ -58,17 +58,23 @@ public class AdminUsersController {
         }
     }
 
-    @DeleteMapping("/deleteuserbyemail/{email}")
-    public Object deleteUser(@PathVariable String email) {
+    @DeleteMapping("/banuserbyemail/{email}")
+    public ResponseEntity<?> deleteUser(@PathVariable String email) {
 
         UserEntity  user = adminUserService.findUserByEmail(email);
 
-        if (user!= null) {
-            adminUserService.deleteUser(user);
-            return " user deleted with email : "+user.getEmail();
+        if (user == null) {
+            return ResponseEntity.notFound().build();
 
         }
-        return "no user found";
+        else if(adminUserService.deleteUser(user)){
+
+        return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.internalServerError().build();
+        }
+
     }
 
     @GetMapping("/activeusers")

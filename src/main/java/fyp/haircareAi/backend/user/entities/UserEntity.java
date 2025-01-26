@@ -76,7 +76,8 @@ public class UserEntity {
     // Enum to represent user roles
     public enum Role {
         USER,
-        ADMIN
+        ADMIN,
+        BAN
     }
 
 
