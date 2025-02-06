@@ -1,6 +1,8 @@
 package fyp.haircareAi.backend.admin.adminControllers;
 
 
+
+
 import fyp.haircareAi.backend.admin.adminServices.AdminUserService;
 import fyp.haircareAi.backend.admin.adminServices.UserDashboardService;
 import fyp.haircareAi.backend.admin.cache.UserCache;
@@ -14,7 +16,7 @@ import java.util.Map;
 
 @RequestMapping("/admin/dashboard/usersdashboard")
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class AdminUsersController {
     @Autowired
     private AdminUserService adminUserService;
@@ -31,6 +33,7 @@ public class AdminUsersController {
 
     @GetMapping("/allusers")
     public Object getAlUser() {
+        System.out.println("users call");
         List<UserEntity> entries = adminUserService.getAllUsers();
         if ( entries !=null && !entries.isEmpty() ) {
             return entries;

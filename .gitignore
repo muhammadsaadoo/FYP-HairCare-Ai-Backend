@@ -33,3 +33,6 @@ src/main/resources/
 
 ### VS Code ###
 .vscode/
+*.log
+*.class
+
