@@ -107,7 +107,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>3.11.0</version>   <!-- Updated to latest stable version -->
 				<configuration>
 					<source>17</source>
 					<target>17</target>
@@ -116,14 +116,25 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>3.4.1</version> <!-- Ensure this matches your Spring Boot version -->
+				<version>3.1.5</version>    <!-- Updated to a stable version -->
 				<executions>
 					<execution>
+						<id>repackage</id>
 						<goals>
 							<goal>repackage</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<mainClass>fyp.haircareAi.backend.BackendApplication</mainClass>
+					<layout>JAR</layout>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
