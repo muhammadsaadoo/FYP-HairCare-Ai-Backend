@@ -35,5 +35,5 @@ src/main/resources/
 .vscode/
 *.log
 *.class
-!/target/
+
 
