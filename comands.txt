@@ -9,3 +9,6 @@ scalingo --app my-app env-set BUILDPACK_URL="https://github.com/Scalingo/buildpa
 git push git@ssh.osc-fr1.scalingo.com:haircareai.git
 
 <-- https://haircareai.osc-fr1.scalingo.io -->
+
+
+fyp-haircare-ai-backend-production.up.railway.app
