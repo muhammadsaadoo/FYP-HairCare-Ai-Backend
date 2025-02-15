@@ -1,12 +1,8 @@
 HELP.md
 
 !.mvn/wrapper/maven-wrapper.jar
-
-### Ignore all target folders ###
-target/*
-
-# Allow only the JAR file inside target/
-!target/*.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -30,8 +26,14 @@ target/*
 /nbdist/
 /.nb-gradle/
 build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+src/main/resources/
+
 
 ### VS Code ###
 .vscode/
 *.log
 *.class
+
+

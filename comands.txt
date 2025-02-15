@@ -12,3 +12,11 @@ git push git@ssh.osc-fr1.scalingo.com:haircareai.git
 
 
 fyp-haircare-ai-backend-production.up.railway.app
+
+java -jar .\backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+
+
+
+https://console.cloud.google.com/auth/clients?inv=1&invt=AbpkIw&project=haircareai-450917
+https://developers.google.com/oauthplayground/?code=4%2F0ASVgi3KNnMygbP6u9CPXubZCESayUzMtC12R8a0FP1OWg5LwYjpC9hbbjrax646PftBLEw&scope=email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=consent
+

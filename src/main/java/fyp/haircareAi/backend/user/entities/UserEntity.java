@@ -53,10 +53,10 @@ public class UserEntity {
     private String password;
 
     @Column
-    @NonNull
+//    @NonNull
     private String gender;
 
-    @NonNull
+//    @NonNull
     @Column
     private Integer age;
 

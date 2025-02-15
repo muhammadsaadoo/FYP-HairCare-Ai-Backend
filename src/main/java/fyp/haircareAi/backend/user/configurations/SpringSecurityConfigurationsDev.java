@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +19,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -74,6 +79,21 @@ public class SpringSecurityConfigurationsDev {
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
 //        return auth.getAuthenticationManager();
 //    }
+@Bean
+public RestTemplate restTemplate() {
+    RestTemplate restTemplate = new RestTemplate();
+    restTemplate.setErrorHandler(new ResponseErrorHandler() {
+        @Override
+        public boolean hasError(ClientHttpResponse response) throws IOException {
+            return false;
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse response) throws IOException {
+        }
+    });
+    return restTemplate;
+}
 }
 
 
