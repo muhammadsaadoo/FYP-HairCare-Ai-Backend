@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.controllers;
 
+import fyp.haircareAi.backend.dto.EmailVerificationRequest;
 import fyp.haircareAi.backend.user.entities.ProductEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.services.SignupServiceImpl;
@@ -20,18 +21,19 @@ public class SignupController {
     @Autowired
     private SignupServiceImpl signupService;
 
-//    @PostMapping
-//    public Object verifyEmail(@Valid @RequestBody UserEntity newUser, BindingResult result) {
-//
-//          return signupService.verifyEmail(newUser,result);
-//
-//
-//    }
+    @PostMapping("/email_verification")
+    public Object verifyEmail(@Valid @RequestBody EmailVerificationRequest email_verificationCode, BindingResult result) {
+
+          return signupService.verifyEmail(email_verificationCode,result);
+
+
+    }
     @PostMapping
     public ResponseEntity<?> verify(@RequestBody UserEntity user){
         return signupService.insertUser(user);
 
     }
+
 //    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ResponseEntity<?> addProduct(
 //            @RequestPart("user") UserEntity user,

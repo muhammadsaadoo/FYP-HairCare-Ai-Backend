@@ -8,8 +8,10 @@ C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\repositor
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\repositories\BanUserRepo.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminServices\AdminUserService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\HairAnalysisEntity.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\GoogleAuthService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\LoginServiceImpl.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminControllers\AdminProductController.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\controllers\GoogleAuthController.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\utils\JwtUtil.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\UserService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\ProblemEntity.java
@@ -26,11 +28,15 @@ C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\FeedbackEntity.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\repositories\ProductRepo.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\controllers\SignupController.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\configurations\RedisConfig.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\BanUserEntity.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\interfaces\EmailService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\IssueEntity.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\SignupServiceImpl.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\configurations\TransactionConfigurations.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\dto\EmailVerificationRequest.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminControllers\AssignRolesController.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminControllers\AdminUsersController.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\interfaces\SignUpService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\controllers\UserDetailsController.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\AuthResponse.java

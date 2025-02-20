@@ -60,6 +60,16 @@ public class UserEntity {
     @Column
     private Integer age;
 
+//    @Column
+//    @Enumerated(EnumType.STRING)
+//    private IsVerified verify=IsVerified.unverified;
+//    public enum IsVerified {
+//        verified,
+//        unverified
+//    }
+    @Column
+    private Boolean verify=false;
+
 
 
 
@@ -91,6 +101,8 @@ public class UserEntity {
         Regular,
         Premium
     }
+
+
 
 
 

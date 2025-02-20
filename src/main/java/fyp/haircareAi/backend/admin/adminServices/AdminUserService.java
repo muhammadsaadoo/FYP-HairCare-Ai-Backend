@@ -9,6 +9,7 @@ import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ import java.util.Optional;
 @Service
 public class AdminUserService{
     @Autowired
-    private AuthRepo signUpRepo;
+    private AuthRepo authRepo;
 
 
     @Autowired
@@ -43,20 +44,28 @@ public class AdminUserService{
 
     }
     public List<UserEntity> getAllAdmins(){
-        return signUpRepo.findByRole(UserEntity.Role.ADMIN);
+        return authRepo.findByRole(UserEntity.Role.ADMIN);
 
     }
     public UserEntity findUserByEmail(String email){
-        Optional<UserEntity> dbuser= signUpRepo.findByEmail(email);
+        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
 
         return dbuser.orElse(null);
 
     }
+//    public ResponseEntity<?> deleteUser(String email){
+//        try{
+//            authRepo.(email);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     @Transactional
-    public boolean deleteUser(UserEntity user){
+    public boolean banUser(UserEntity user){
         try {
 
-            signUpRepo.delete(user);
+            authRepo.delete(user);
             BanUserEntity banUser=new BanUserEntity();
             banUser.setEmail(user.getEmail());
            banUserRepo.save(banUser);

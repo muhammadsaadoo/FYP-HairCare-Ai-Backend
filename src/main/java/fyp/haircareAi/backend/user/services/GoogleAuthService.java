@@ -21,8 +21,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+
 @Slf4j
+@Service
 public class GoogleAuthService {
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
@@ -31,11 +32,11 @@ public class GoogleAuthService {
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String clientSecret;
 
-    @Autowired(required=true)
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
-    UserDetailServiceImpl userDetailService;
+    private UserDetailServiceImpl userDetailService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -95,6 +96,10 @@ public class GoogleAuthService {
                     user.setStatus(UserEntity.Status.Active);
                     user.setLastLogin(LocalDateTime.now());
                     user.setLast_name("undefine");
+//                    user.setVerify(UserEntity.IsVerified.verified);
+                    user.setVerify(true);
+
+
                     authRepo.save(user);
                 }
                 jwtToken = jwtUtil.generateToken(email, String.valueOf(user.getRole()));
