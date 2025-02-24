@@ -1,0 +1,36 @@
+Actuator is used to monitor the production ready application and manage it
+
+add dependency
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+    <version>3.4.2</version>
+</dependency>
+
+localhost:8080/actuator    by default give three 3 end points
+
+if we want to access all endpoints we need to add configurations in application.yml
+#Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+to show a particular end point details we use this configuration
+////HEATLH\\\\\
+  endpoint:
+    health:
+      show-details: always
+
+health endpoints tell about components of application
+like db, email,redis,disk space,ssl etc
+
+
+/////....Info endPoint.........\\\\\\\\\\
+it gives us the info about application
+it can be static and dynmically configured
+management:
+  info:
+    enable: true
+
