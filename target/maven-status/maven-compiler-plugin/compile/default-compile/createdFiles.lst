@@ -34,9 +34,9 @@ fyp\haircareAi\backend\user\filter\JwtFilter.class
 fyp\haircareAi\backend\admin\adminControllers\AssignRolesController.class
 fyp\haircareAi\backend\admin\cache\UserCache.class
 fyp\haircareAi\backend\user\configurations\SpringSecurityConfigurationsProd.class
+fyp\haircareAi\backend\dto\AuthResponse.class
 fyp\haircareAi\backend\user\entities\FeedbackEntity.class
 fyp\haircareAi\backend\admin\adminControllers\AdminUsersController.class
-fyp\haircareAi\backend\user\services\AuthResponse.class
 fyp\haircareAi\backend\user\configurations\TransactionConfigurations.class
 fyp\haircareAi\backend\user\entities\ProblemEntity.class
 fyp\haircareAi\backend\user\repositories\AuthRepo.class

@@ -15,6 +15,7 @@ C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\controlle
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\utils\JwtUtil.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\UserService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\entities\ProblemEntity.java
+C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\dto\AuthResponse.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminServices\UserDashboardService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\configurations\SpringSecurityConfigurationsProd.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\controllers\LoginController.java
@@ -39,4 +40,3 @@ C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminCon
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\admin\adminControllers\AdminUsersController.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\interfaces\SignUpService.java
 C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\controllers\UserDetailsController.java
-C:\java_projects\FYP\backend\src\main\java\fyp\haircareAi\backend\user\services\AuthResponse.java

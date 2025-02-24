@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RequestMapping("/admin/dashboard/usersdashboard")
 @RestController
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AdminUsersController {
     @Autowired
     private AdminUserService adminUserService;
@@ -88,3 +89,4 @@ public class AdminUsersController {
 
 
 }
+////////////////////////////////////////////////////////////////////-*/

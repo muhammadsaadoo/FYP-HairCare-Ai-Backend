@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.services;
 
+import fyp.haircareAi.backend.dto.AuthResponse;
 import fyp.haircareAi.backend.user.entities.LoginEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
@@ -7,6 +8,7 @@ import fyp.haircareAi.backend.user.services.interfaces.LoginService;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
     private JwtUtil jwtUtil;
 
     @Override
-    public String checkUser(LoginEntity user){
+    public ResponseEntity<?> checkUser(LoginEntity user){
         try {
             // Authenticate the user
             System.out.println("Authenticate....................................");
@@ -59,22 +61,23 @@ public class LoginServiceImpl implements LoginService {
             // Update the user status to Active
             // Instead of calling the repository twice, combine the status update and user retrieval
             Optional<UserEntity> dbuser= authRepo.findByEmail(userDetails.getUsername());
-
+            UserEntity userr=null;
             if(dbuser.isPresent()){
-                UserEntity userr=dbuser.get();
+                userr=dbuser.get();
                 userr.setStatus(UserEntity.Status.valueOf("Active"));
                 userr.setLastLogin(LocalDateTime.now());// Set the user status to Active
                 authRepo.save(userr); // Save the updated user entity with Active status
             }
 
             // Generate JWT with username and roles
-            return  jwtUtil.generateToken(userDetails.getUsername(), roles);
+            String jwtToken=jwtUtil.generateToken(userDetails.getUsername(), roles);
+            return ResponseEntity.ok(new AuthResponse(jwtToken, userr));
 
 
 
         } catch (AuthenticationException e) {
             log.error("Exception occurred while creating authentication token", e);
-            return null;
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

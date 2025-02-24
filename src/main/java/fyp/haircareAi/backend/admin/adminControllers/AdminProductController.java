@@ -21,6 +21,7 @@ import java.util.Map;
 
 @RequestMapping("/admin/dashboard/productdashboard")
 @RestController
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AdminProductController {
     @Autowired
     private ProductDashboardService productDashboardService;

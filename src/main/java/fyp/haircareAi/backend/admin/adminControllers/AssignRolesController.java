@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/roles")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AssignRolesController {
     @Autowired
     private SignUpService signUpService;

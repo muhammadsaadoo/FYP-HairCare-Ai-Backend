@@ -27,7 +27,7 @@ public class SpringSecurityConfigurationsProd {
     @Autowired
     private JwtFilter jwtFilter;
 
-//    @Bean
+///    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/**").permitAll())  // This permits all requests
@@ -37,7 +37,7 @@ public class SpringSecurityConfigurationsProd {
 //        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 //
 //        return http.build();
-//    }
+//    }/
 
 
     @Bean

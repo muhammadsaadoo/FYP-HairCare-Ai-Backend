@@ -1,4 +1,4 @@
-package fyp.haircareAi.backend.user.services;
+package fyp.haircareAi.backend.dto;
 
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import lombok.AllArgsConstructor;
