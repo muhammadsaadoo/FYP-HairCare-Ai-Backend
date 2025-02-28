@@ -6,6 +6,7 @@ package fyp.haircareAi.backend.admin.adminControllers;
 import fyp.haircareAi.backend.admin.adminServices.AdminUserService;
 import fyp.haircareAi.backend.admin.adminServices.UserDashboardService;
 import fyp.haircareAi.backend.admin.cache.UserCache;
+import fyp.haircareAi.backend.user.entities.HairAnalysisEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +84,13 @@ public class AdminUsersController {
     @GetMapping("/activeusers")
     public List<UserEntity> getAllActiveUsers() {
         return adminUserService.activeUsers();
+
+    }
+
+    @GetMapping("/analysis_results/{userid}")
+    public ResponseEntity<List<HairAnalysisEntity>> gethairAnalysisofUser(@PathVariable int userid ) {
+
+        return adminUserService.getAnalysis(userid);
 
     }
 

@@ -1,0 +1,29 @@
+.................................Docker.........................
+
+problem
+
+john...>       ......................            <...........sara
+               working on same codebase
+
+               .....................
+
+john push code                                                  but sara used an old version
+with the new version                                            when sara pull the code of john
+                                                                with new version it gets issue
+
+so the Docker comes to slove this issue
+so sara has a container
+
+we can ude docker in spring boot app by 2 methods
+1 by creating the dockerfile
+2 use mavin plugin that we already use in our app
+
+we use mavin plugin
+./mvnw spring-boot:build-image -Dspring.profiles.active=dev "-Dspring-boot.build-image.imageName=muhammadsaadoo/haircareai_backend_docker_image"
+
+
+
+latest: digest: sha256:108fd6c637b1097fd88b09a402558190dff2f652d8df89418aae95f9a97ec2a1 size: 3434
+
+cache clean
+./mvnw clean spring-boot:build-image -Dspring-boot.build-image.imageName=muhammadsaadoo/haircareai_backend_docker_image

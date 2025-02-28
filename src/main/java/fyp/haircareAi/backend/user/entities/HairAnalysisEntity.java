@@ -1,13 +1,8 @@
 package fyp.haircareAi.backend.user.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import java.time.LocalDateTime;
 
@@ -18,23 +13,21 @@ import java.time.LocalDateTime;
 public class HairAnalysisEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(name = "analysis_id")
     private Long analysisId;
 
 
-    @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private UserEntity user;
+    private long userId; // One user can have multiple hair analyses
 
-    @Column
-    private String hairDensity;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column
-    private String scalpHealth;
+   @Column
+    private String problem; // One problem can be linked to multiple analyses
 
-    @Column
-    private String detectedIssues;
+    @Column(name = "recommended_product")
+    private String recommendedProduct;
 
-    @Column
-    private LocalDateTime timestamp = LocalDateTime.now();
+    @Column(name = "image_path")
+    private String imagePath;
 }

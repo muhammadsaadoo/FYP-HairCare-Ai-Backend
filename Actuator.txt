@@ -34,3 +34,15 @@ management:
   info:
     enable: true
 
+Bean
+it show all the info about beans
+Loggong
+use as a logging
+shutdown
+use to gracefull shut down   (mean all requests are proceed then i will shutdown)
+by default it is not enable
+so we have to enable it
+managemant.endpoint.shutdown.enabled=true
+http://localhost:8080/actuator/shutdown    this only support post request
+
+

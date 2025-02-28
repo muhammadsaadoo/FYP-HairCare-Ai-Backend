@@ -3,7 +3,9 @@ package fyp.haircareAi.backend.admin.adminServices;
 
 import fyp.haircareAi.backend.admin.cache.UserCache;
 import fyp.haircareAi.backend.user.entities.BanUserEntity;
+import fyp.haircareAi.backend.user.entities.HairAnalysisEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
+import fyp.haircareAi.backend.user.repositories.AnalysisRepo;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
@@ -31,6 +33,8 @@ public class AdminUserService{
 
     @Autowired
     private UserCache userCache;
+    @Autowired
+    private AnalysisRepo analysisRepo;
 
     public List<UserEntity> getAllUsers(){
         try {
@@ -112,6 +116,18 @@ public class AdminUserService{
 
     public void userDashboard(){
 
+    }
+
+    public ResponseEntity<List<HairAnalysisEntity>> getAnalysis(int userId){
+        try {
+            List<HairAnalysisEntity> listofanalysis=analysisRepo.findByUserId(userId);
+            if(listofanalysis.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(listofanalysis);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 
