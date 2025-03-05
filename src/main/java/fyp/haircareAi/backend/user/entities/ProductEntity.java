@@ -53,16 +53,9 @@ public class ProductEntity {
         Available, Discontinued
     }
 
-    @JsonIgnore
-    @Column
-    private String imageName;
 
-    @JsonIgnore
     @Column
-    private String imageType;
+    private String imagePath;
 
-    @JsonIgnore
-    @Lob
-    @Column
-    private byte[] imageData;
+
 }

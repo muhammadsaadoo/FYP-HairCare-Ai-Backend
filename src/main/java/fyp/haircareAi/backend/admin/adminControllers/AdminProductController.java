@@ -38,17 +38,15 @@ public class AdminProductController {
 
     }
     @PostMapping(value = "/insertproduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addProduct(
+    public ResponseEntity<ProductEntity> addProduct(
             @RequestPart("product") ProductEntity product,
             @RequestPart("imageFile") MultipartFile imageFile
     ) {
 
-        try {
-            ProductEntity productadded = productDashboardService.addProductInDb(product, imageFile);
-            return new ResponseEntity<>(productadded, HttpStatus.CREATED);
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().build(); // Added .build()
-        }
+
+             return productDashboardService.addProductInDb(product, imageFile);
+
+
     }
 
 
@@ -98,6 +96,30 @@ public class AdminProductController {
         }
         return ResponseEntity.notFound().build();
     }
+    @PostMapping(value = "/updateProduct/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProduct(
+            @PathVariable long productId,
+            @RequestPart("product") ProductEntity product,
+            @RequestPart("imageFile") MultipartFile imageFile
+    ) {
+
+        return productDashboardService.updateProduct(productId,product,imageFile);
+
+
+    }
+
+//    @PostMapping(value = "/updateproduct/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> updateProduct(
+//            @PathVariable long productId,
+//            @RequestPart("product") ProductEntity product,
+//            @RequestPart("imageFile") MultipartFile imageFile
+//    ) {
+//        System.out.println(product);
+//
+//
+//       return productDashboardService.updateProduct(productId,product,imageFile);
+//
+//    }
 //
 //    @GetMapping("/activeusers")
 //    public List<UserEntity> getAllActiveUsers() {

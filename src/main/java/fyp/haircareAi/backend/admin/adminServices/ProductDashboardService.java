@@ -1,17 +1,17 @@
 package fyp.haircareAi.backend.admin.adminServices;
 
 import fyp.haircareAi.backend.admin.cache.ProductCache;
+import fyp.haircareAi.backend.user.entities.ProblemEntity;
 import fyp.haircareAi.backend.user.entities.ProductEntity;
+import fyp.haircareAi.backend.user.repositories.ProblemRepo;
 import fyp.haircareAi.backend.user.repositories.ProductRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +25,11 @@ public class ProductDashboardService {
     @Autowired
     private ProductRepo productRepo;
 
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private ProblemRepo problemRepo;
     public Map<String, Object> getProductDashboardData() {
         Map<String, Object> productData = new HashMap<>();
 
@@ -41,15 +46,29 @@ public class ProductDashboardService {
 
 
     @Transactional
-    public ProductEntity addProductInDb(ProductEntity product, MultipartFile imageFile) throws IOException {
-        product.setImageName(imageFile.getOriginalFilename());
-        product.setImageType(imageFile.getContentType());
-        product.setImageData(imageFile.getBytes());
+    public ResponseEntity<ProductEntity> addProductInDb(ProductEntity product, MultipartFile imageFile){
 
 
-        ProductEntity insertedproduct=productRepo.save(product);
-        productCache.insertintolist(insertedproduct);
-        return insertedproduct;
+        try {
+
+
+            String path = imageService.insertImage(imageFile);
+            if (path != null) {
+                product.setImagePath(path);
+                ProductEntity addedProduct =productRepo.save(product);
+                Optional<ProblemEntity> problemOptional=problemRepo.findById(Math.toIntExact(addedProduct.getProblem().getProblemId()));
+
+                if(problemOptional.isPresent()) {
+                    addedProduct.setProblem(problemOptional.get());
+                    return ResponseEntity.ok(addedProduct);
+                }
+            }
+            return ResponseEntity.notFound().build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 
@@ -63,13 +82,54 @@ public class ProductDashboardService {
         Optional<ProductEntity> product = productRepo.findById(productId);
         System.out.println(product);
 
-        if (product.isPresent() && product.get().getImageData() != null) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.valueOf(product.get().getImageType()))
-                    .body(product.get().getImageData());
-        }
+
         return ResponseEntity.notFound().build();
     }
+
+    public ResponseEntity<?> updateProduct(long productId,ProductEntity updatedProduct, MultipartFile imageFile) {
+        try {
+
+            if(!imageFile.isEmpty()){
+                boolean delete=imageService.deleteImage(updatedProduct.getImagePath());
+                if(delete){
+                    String imagePath=imageService.insertImage(imageFile);
+                    updatedProduct.setImagePath(imagePath);
+                }
+                else{
+                    ResponseEntity.notFound().build();
+                }
+
+            }
+
+            Optional<ProductEntity> dbProductOpt = productRepo.findById(productId);
+
+            if (dbProductOpt.isEmpty()) {
+                return ResponseEntity.notFound().build(); // Return 404 if product is not found
+            }
+
+            ProductEntity existingProduct = dbProductOpt.get();
+
+
+
+
+            // Update only non-null fields to avoid overwriting with null values
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setProblem(updatedProduct.getProblem());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setRating(updatedProduct.getRating());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setRecommendations(updatedProduct.getRecommendations());
+            existingProduct.setStatus(updatedProduct.getStatus());
+
+            ProductEntity newProduct=productRepo.save(existingProduct); // Save updated product
+
+            return ResponseEntity.ok(newProduct); // Return updated product
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
 
 
