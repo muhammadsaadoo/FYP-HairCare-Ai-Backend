@@ -53,12 +53,8 @@ public class AdminProductController {
 
     @GetMapping("/allproducts")
     public ResponseEntity<List<ProductEntity>> getAlProducts() {
-        List<ProductEntity> products = productCache.getAllProductsList();
-        if ( products !=null && !products.isEmpty() ) {
-            return new ResponseEntity<>(products, HttpStatus.OK);
-        } else {
-            return ResponseEntity.internalServerError().build();
-        }
+
+        return productDashboardService.allProducts();
     }
 //    @GetMapping("/allAdmins")
 //    public Object allAdmins() {
@@ -87,14 +83,9 @@ public class AdminProductController {
     @DeleteMapping("/deleteproduct/{id}")
     public ResponseEntity<?> deleteproduct(@PathVariable("id") long productId) {
 
-        boolean isDeleted=productCache.deleteProduct(productId);
-
-        if (isDeleted) {
-             return ResponseEntity.ok().build();
+        return productDashboardService.deleteProduct(productId);
 
 
-        }
-        return ResponseEntity.notFound().build();
     }
     @PostMapping(value = "/updateProduct/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProduct(

@@ -62,22 +62,10 @@ public class AdminUsersController {
         }
     }
 
-    @DeleteMapping("/banuserbyemail/{email}")
-    public ResponseEntity<?> deleteUser(@PathVariable String email) {
+    @DeleteMapping("/banuserbyid/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
 
-        UserEntity  user = adminUserService.findUserByEmail(email);
-
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-
-        }
-        else if(adminUserService.banUser(user)){
-
-        return ResponseEntity.ok().build();
-        }
-        else {
-            return ResponseEntity.internalServerError().build();
-        }
+        return adminUserService.banUser(id);
 
     }
 

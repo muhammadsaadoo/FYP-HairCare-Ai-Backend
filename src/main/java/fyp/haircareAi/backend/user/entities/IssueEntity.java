@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -22,9 +24,8 @@ public class IssueEntity {
     private Long issueId;
 
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private UserEntity user;
+    @Column
+    private long userId;
 
     @Column
     private String description;
@@ -38,5 +39,12 @@ public class IssueEntity {
 
     public enum Status {
         Pending, Resolved
+    }
+    @Column
+    @Enumerated(EnumType.STRING)
+    private FeedbackEntity.Type type;
+
+    public enum Type {
+        Product, AI, App
     }
 }

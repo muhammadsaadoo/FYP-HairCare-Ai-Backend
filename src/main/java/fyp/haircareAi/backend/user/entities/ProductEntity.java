@@ -33,6 +33,8 @@ public class ProductEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+
+
     @Column
     private Double rating;
 
@@ -56,6 +58,7 @@ public class ProductEntity {
 
     @Column
     private String imagePath;
+
 
 
 }

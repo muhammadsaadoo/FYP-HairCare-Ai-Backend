@@ -11,6 +11,7 @@ import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,19 +67,23 @@ public class AdminUserService{
 //    }
 
     @Transactional
-    public boolean banUser(UserEntity user){
+    public ResponseEntity<?> banUser(int id){
         try {
+            Optional<UserEntity> optionalUser=authRepo.findById(id);
 
-            authRepo.delete(user);
-            BanUserEntity banUser=new BanUserEntity();
-            banUser.setEmail(user.getEmail());
-           banUserRepo.save(banUser);
+            if(optionalUser.isPresent()) {
+                authRepo.delete(optionalUser.get());
+                BanUserEntity banUser = new BanUserEntity();
+                banUser.setEmail(optionalUser.get().getEmail());
+                banUserRepo.save(banUser);
 
 
-            return true;
+                return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
         }
 
     }
