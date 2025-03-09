@@ -4,10 +4,12 @@ package fyp.haircareAi.backend.admin.adminServices;
 import fyp.haircareAi.backend.admin.cache.UserCache;
 import fyp.haircareAi.backend.user.entities.BanUserEntity;
 import fyp.haircareAi.backend.user.entities.HairAnalysisEntity;
+import fyp.haircareAi.backend.user.entities.ReportEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AnalysisRepo;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.repositories.BanUserRepo;
+import fyp.haircareAi.backend.user.repositories.ReportRepo;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class AdminUserService{
     private UserCache userCache;
     @Autowired
     private AnalysisRepo analysisRepo;
+
+    @Autowired
+    private ReportRepo reportRepo;
 
     public List<UserEntity> getAllUsers(){
         try {
@@ -130,6 +135,18 @@ public class AdminUserService{
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(listofanalysis);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    public ResponseEntity<List<ReportEntity>> getReport(int userId){
+        try {
+            List<ReportEntity> listofReports=reportRepo.findByUserId(userId);
+            if(listofReports.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(listofReports);
         }catch (Exception e){
             return ResponseEntity.internalServerError().build();
         }

@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.controllers;
 
+import fyp.haircareAi.backend.user.entities.ReportEntity;
 import fyp.haircareAi.backend.user.services.UserService;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,16 @@ public class UserDetailsController {
         return userService.insertImage(emil,image);
 
 
+    }
+
+    @PostMapping("/report")
+    public ResponseEntity<?> addreport(
+            @RequestBody ReportEntity report,
+            @RequestHeader("Authorization") String token
+    ){
 
 
-
-
-
+        return  userService.insertReport(token,report);
     }
 
 
