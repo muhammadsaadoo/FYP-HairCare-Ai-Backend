@@ -23,6 +23,9 @@ public class FeedbackEntity {
     private Long feedbackId;
 
     @Column
+    private long userId;
+
+    @Column
     @Enumerated(EnumType.STRING)
     private Type type;
 

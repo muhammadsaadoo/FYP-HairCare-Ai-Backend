@@ -6,6 +6,7 @@ package fyp.haircareAi.backend.admin.adminControllers;
 import fyp.haircareAi.backend.admin.adminServices.AdminUserService;
 import fyp.haircareAi.backend.admin.adminServices.UserDashboardService;
 import fyp.haircareAi.backend.admin.cache.UserCache;
+import fyp.haircareAi.backend.user.entities.FeedbackEntity;
 import fyp.haircareAi.backend.user.entities.HairAnalysisEntity;
 import fyp.haircareAi.backend.user.entities.ReportEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
@@ -86,6 +87,13 @@ public class AdminUsersController {
     public ResponseEntity<List<ReportEntity>> getReportofUser(@PathVariable int userid ) {
 
         return adminUserService.getReport(userid);
+
+    }
+
+    @GetMapping("/feedback/{userid}")
+    public ResponseEntity<List<FeedbackEntity>> getFeedbackofUser(@PathVariable int userid ) {
+
+        return adminUserService.getFeedback(userid);
 
     }
 

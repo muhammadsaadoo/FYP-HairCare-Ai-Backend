@@ -2,14 +2,8 @@ package fyp.haircareAi.backend.admin.adminServices;
 
 
 import fyp.haircareAi.backend.admin.cache.UserCache;
-import fyp.haircareAi.backend.user.entities.BanUserEntity;
-import fyp.haircareAi.backend.user.entities.HairAnalysisEntity;
-import fyp.haircareAi.backend.user.entities.ReportEntity;
-import fyp.haircareAi.backend.user.entities.UserEntity;
-import fyp.haircareAi.backend.user.repositories.AnalysisRepo;
-import fyp.haircareAi.backend.user.repositories.AuthRepo;
-import fyp.haircareAi.backend.user.repositories.BanUserRepo;
-import fyp.haircareAi.backend.user.repositories.ReportRepo;
+import fyp.haircareAi.backend.user.entities.*;
+import fyp.haircareAi.backend.user.repositories.*;
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +35,9 @@ public class AdminUserService{
 
     @Autowired
     private ReportRepo reportRepo;
+
+    @Autowired
+    private FeedbackRepo feedbackRepo;
 
     public List<UserEntity> getAllUsers(){
         try {
@@ -147,6 +144,18 @@ public class AdminUserService{
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(listofReports);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    public ResponseEntity<List<FeedbackEntity>> getFeedback(int userId){
+        try {
+            List<FeedbackEntity> listoffeedback=feedbackRepo.findByUserId(userId);
+            if(listoffeedback.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(listoffeedback);
         }catch (Exception e){
             return ResponseEntity.internalServerError().build();
         }

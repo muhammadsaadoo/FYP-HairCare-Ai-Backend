@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -58,6 +60,9 @@ public class ProductEntity {
 
     @Column
     private String imagePath;
+
+    @Column
+    List<String> comments=new ArrayList<>();
 
 
 

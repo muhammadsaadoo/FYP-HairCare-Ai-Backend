@@ -38,7 +38,7 @@ spring:
 
   image:
     storage:
-      path: C:/java_projects/FYP/backend/images/
+      path: images
 
 
 

@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.controllers;
 
+import fyp.haircareAi.backend.user.entities.FeedbackEntity;
 import fyp.haircareAi.backend.user.entities.ReportEntity;
 import fyp.haircareAi.backend.user.services.UserService;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
@@ -52,6 +53,16 @@ public class UserDetailsController {
 
 
         return  userService.insertReport(token,report);
+    }
+
+    @PostMapping("/feedback")
+    public ResponseEntity<?> addfeedback(
+            @RequestBody FeedbackEntity feedback,
+            @RequestHeader("Authorization") String token
+    ){
+
+
+        return  userService.insertfeedback(token,feedback);
     }
 
 

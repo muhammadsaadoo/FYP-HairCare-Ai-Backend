@@ -1,0 +1,215 @@
+### **Professional Database Design for HairCare AI App**
+
+#### **Database Schema Overview**
+The database is designed using a **relational model** (PostgreSQL) to ensure data integrity, scalability, and efficient querying. Below are the tables, relationships, and key considerations:
+
+---
+
+### **1. Core Tables**
+
+#### **Users**
+- Stores user account details and authentication.
+```sql
+CREATE TABLE Users (
+    UserID SERIAL PRIMARY KEY,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,  -- bcrypt hashed
+    Role VARCHAR(20) DEFAULT 'Regular',  -- Regular/Premium/Admin
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    LastLogin TIMESTAMP
+);
+```
+
+#### **UserProfile**
+- Detailed hair history and genetic/family data.
+```sql
+CREATE TABLE UserProfile (
+    ProfileID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL REFERENCES Users(UserID) ON DELETE CASCADE,
+    HairType VARCHAR(50),  -- e.g., curly, straight, oily
+    HairHistory TEXT,      -- past issues/treatments
+    FamilyHistory TEXT,    -- hereditary conditions
+    InitialConditions TEXT,-- baseline hair state
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP
+);
+```
+
+#### **HairImages**
+- Stores user-uploaded images and AI analysis metadata.
+```sql
+CREATE TABLE HairImages (
+    ImageID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL REFERENCES Users(UserID) ON DELETE CASCADE,
+    ImageURL VARCHAR(512) NOT NULL,  -- AWS S3/GCP Cloud Storage path
+    CaptureDate DATE NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### **AnalysisResults**
+- Structured AI analysis of hair images.
+```sql
+CREATE TABLE AnalysisResults (
+    AnalysisID SERIAL PRIMARY KEY,
+    ImageID INT NOT NULL REFERENCES HairImages(ImageID) ON DELETE CASCADE,
+    DensityScore FLOAT,       -- hair density (0-100)
+    DrynessLevel VARCHAR(20), -- e.g., low/moderate/severe
+    DandruffPresence BOOLEAN,
+    SplitEndsCount INT,
+    ScalpHealthScore FLOAT,   -- 0-10 scale
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+### **2. Activity Tracking Tables**
+
+#### **DailyLogs**
+- Tracks product usage, diet, and lifestyle habits.
+```sql
+CREATE TABLE DailyLogs (
+    LogID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL REFERENCES Users(UserID) ON DELETE CASCADE,
+    LogDate DATE NOT NULL,
+    ProductsUsed JSONB,       -- e.g., ["ProductID1", "ProductID2"]
+    DietNotes TEXT,           -- free-text entries (e.g., "ate salmon, spinach")
+    Lifestyle TEXT,           -- e.g., stress levels, sleep hours
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### **ProgressReports**
+- Monthly/weekly hair health summaries.
+```sql
+CREATE TABLE ProgressReports (
+    ReportID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL REFERENCES Users(UserID) ON DELETE CASCADE,
+    PeriodStart DATE NOT NULL,
+    PeriodEnd DATE NOT NULL,
+    Summary TEXT,             -- AI-generated text summary
+    Metrics JSONB,            -- e.g., {"hydration": 75%, "breakage": "reduced"}
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+### **3. Product Management Tables**
+
+#### **Products**
+- Hair care product database.
+```sql
+CREATE TABLE Products (
+    ProductID SERIAL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Brand VARCHAR(100),
+    Ingredients TEXT,
+    HairTypeCompatibility VARCHAR(255),  -- e.g., "curly, dry"
+    Availability BOOLEAN DEFAULT TRUE,
+    AverageRating FLOAT DEFAULT 0.0,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP
+);
+```
+
+#### **Recommendations**
+- AI-generated recommendations for users.
+```sql
+CREATE TABLE Recommendations (
+    RecommendationID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL REFERENCES Users(UserID) ON DELETE CASCADE,
+    GeneratedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ExpiresAt TIMESTAMP,      -- validity period (e.g., 30 days)
+    DietAdvice TEXT,
+    RoutineAdvice TEXT
+);
+```
+
+#### **RecommendationProducts** (Junction Table)
+- Links recommendations to products (many-to-many).
+```sql
+CREATE TABLE RecommendationProducts (
+    RecommendationID INT NOT NULL REFERENCES Recommendations(RecommendationID) ON DELETE CASCADE,
+    ProductID INT NOT NULL REFERENCES Products(ProductID) ON DELETE CASCADE,
+    PRIMARY KEY (RecommendationID, ProductID)
+);
+```
+
+---
+
+### **4. Feedback & Admin Tables**
+
+#### **Feedback**
+- User ratings and comments on recommendations.
+```sql
+CREATE TABLE Feedback (
+    FeedbackID SERIAL PRIMARY KEY,
+    UserID INT NOT NULL REFERENCES Users(UserID) ON DELETE CASCADE,
+    RecommendationID INT REFERENCES Recommendations(RecommendationID),
+    Rating INT CHECK (Rating BETWEEN 1 AND 5),
+    Comment TEXT,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### **Admins**
+- Admin accounts with access levels.
+```sql
+CREATE TABLE Admins (
+    AdminID SERIAL PRIMARY KEY,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,  -- bcrypt hashed
+    AccessLevel VARCHAR(20),  -- e.g., SuperAdmin/Support
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### **SystemLogs**
+- Tracks admin actions and system errors.
+```sql
+CREATE TABLE SystemLogs (
+    LogID SERIAL PRIMARY KEY,
+    LogType VARCHAR(20) NOT NULL,  -- Error/Activity
+    Message TEXT,
+    AdminID INT REFERENCES Admins(AdminID),  -- nullable (auto-generated logs)
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+### **Key Considerations**
+1. **Security**:
+   - Passwords hashed with **bcrypt**.
+   - Sensitive data (e.g., family history) encrypted at rest using **AES-256**.
+   - Role-based access control (RBAC) for admins and users.
+
+2. **Performance**:
+   - Indexes on `UserID`, `ProductID`, and `ImageID` for fast joins.
+   - Partition `HairImages` and `DailyLogs` by date for large datasets.
+
+3. **Scalability**:
+   - Use cloud storage (AWS S3) for images.
+   - Deploy PostgreSQL on cloud services (AWS RDS, Google Cloud SQL) with auto-scaling.
+
+4. **Data Integrity**:
+   - Foreign keys with `ON DELETE CASCADE` to maintain consistency.
+   - Constraints (e.g., `CHECK` for ratings).
+
+---
+
+### **Entity-Relationship Diagram (Simplified)**
+```
+Users ──┬─ UserProfile
+        ├─ HairImages ─── AnalysisResults
+        ├─ DailyLogs
+        ├─ ProgressReports
+        ├─ Recommendations ── RecommendationProducts ── Products
+        └─ Feedback
+
+Admins ─── SystemLogs
+```
+
+This design ensures comprehensive coverage of the app's modules while maintaining scalability and security.
