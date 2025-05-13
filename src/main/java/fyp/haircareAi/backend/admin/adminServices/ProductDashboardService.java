@@ -73,13 +73,22 @@ public class ProductDashboardService {
         }
     }
 
+//get product by product id
+    public ResponseEntity<ProductEntity> getProductById(long id){
 
-    public ProductEntity getProductById(long id){
-
-        Optional<ProductEntity> product=productRepo.findById(id);
-
-        return product.orElse(null);
+        try {
+            Optional<ProductEntity> product = productRepo.findById(id);
+            if (product.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(product.get());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
+
+
+
     public ResponseEntity<byte[]> getProductImage(long productId) {
         Optional<ProductEntity> product = productRepo.findById(productId);
         System.out.println(product);
@@ -91,18 +100,6 @@ public class ProductDashboardService {
     public ResponseEntity<?> updateProduct(long productId,ProductEntity updatedProduct, MultipartFile imageFile) {
         try {
 
-            if(!imageFile.isEmpty()){
-                boolean delete=imageService.deleteImage(updatedProduct.getImagePath());
-                if(delete){
-                    String imagePath=imageService.insertImage(imageFile);
-                    updatedProduct.setImagePath(imagePath);
-                }
-                else{
-                    ResponseEntity.notFound().build();
-                }
-
-            }
-
             Optional<ProductEntity> dbProductOpt = productRepo.findById(productId);
 
             if (dbProductOpt.isEmpty()) {
@@ -110,6 +107,22 @@ public class ProductDashboardService {
             }
 
             ProductEntity existingProduct = dbProductOpt.get();
+
+            System.out.println(updatedProduct);
+            if(!imageFile.isEmpty()){
+
+                boolean delete=imageService.deleteImage(existingProduct.getImagePath());
+                if(delete){
+                    String imagePath=imageService.insertImage(imageFile);
+                    existingProduct.setImagePath(imagePath);
+                }
+                else{
+                    ResponseEntity.notFound().build();
+                }
+
+            }
+
+
 
 
 

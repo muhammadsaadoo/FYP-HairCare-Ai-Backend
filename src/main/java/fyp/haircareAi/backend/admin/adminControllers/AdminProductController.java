@@ -3,6 +3,7 @@ package fyp.haircareAi.backend.admin.adminControllers;
 
 import fyp.haircareAi.backend.admin.adminServices.AdminUserService;
 
+import fyp.haircareAi.backend.admin.adminServices.ImageService;
 import fyp.haircareAi.backend.admin.adminServices.ProductDashboardService;
 import fyp.haircareAi.backend.admin.adminServices.UserDashboardService;
 import fyp.haircareAi.backend.admin.cache.ProductCache;
@@ -29,28 +30,30 @@ public class AdminProductController {
     @Autowired
     private ProductCache productCache;
 
+    @Autowired
+    private ImageService imageService;
 
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>>getAdminDashboardDataForProducts(){
-        Map<String, Object> userData=productDashboardService.getProductDashboardData();
-        return ResponseEntity.ok(userData);
 
-    }
+//    @GetMapping
+//    public ResponseEntity<Map<String, Object>>getAdminDashboardDataForProducts(){
+//        Map<String, Object> userData=productDashboardService.getProductDashboardData();
+//        return ResponseEntity.ok(userData);
+//
+//    }
+
+//add product
     @PostMapping(value = "/insertproduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductEntity> addProduct(
             @RequestPart("product") ProductEntity product,
             @RequestPart("imageFile") MultipartFile imageFile
     ) {
-
-
              return productDashboardService.addProductInDb(product, imageFile);
-
 
     }
 
 
-
+//get all products
     @GetMapping("/allproducts")
     public ResponseEntity<List<ProductEntity>> getAlProducts() {
 
@@ -66,27 +69,36 @@ public class AdminProductController {
 //            return "no user found";
 //        }
 //    }
+
+
+//get product by product id
     @GetMapping("/getproductById/{id}")
-    public Object getUserByEmail(@PathVariable long id) {
-        ProductEntity product = productDashboardService.getProductById(id);
-        if ( product !=null) {
-            return product;
-        } else {
-            return "no user found of email :"+id;
-        }
-    }
-    @GetMapping("/getImageByProductId/{id}")
-    public ResponseEntity<byte[]> getProductImage(@PathVariable("id") long productId) {
-        return productDashboardService.getProductImage(productId);
+    public ResponseEntity<ProductEntity> getUserByEmail(@PathVariable long id) {
+        return productDashboardService.getProductById(id);
     }
 
+
+
+
+//get product image
+    @PostMapping("/getproductImage")
+    public ResponseEntity<byte[]> getProductImage(@RequestBody Map<String, String> payload) {
+        String imagePath = payload.get("imagePath");
+        System.out.println(imagePath);
+        return imageService.getImage(imagePath);
+    }
+
+
+
+//delete product
     @DeleteMapping("/deleteproduct/{id}")
     public ResponseEntity<?> deleteproduct(@PathVariable("id") long productId) {
 
         return productDashboardService.deleteProduct(productId);
 
-
     }
+
+//update product
     @PostMapping(value = "/updateProduct/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProduct(
             @PathVariable long productId,

@@ -39,19 +39,19 @@ public class AdminUserService{
     @Autowired
     private FeedbackRepo feedbackRepo;
 
-    public List<UserEntity> getAllUsers(){
+    public ResponseEntity<List<UserEntity>> getAllUsers(){
         try {
 
             userCache.getAllUsers();
-            return userCache.getUsers();
+            return ResponseEntity.ok(userCache.getUsers());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
     }
-    public List<UserEntity> getAllAdmins(){
-        return authRepo.findByRole(UserEntity.Role.ADMIN);
+    public ResponseEntity<List<UserEntity>> getAllAdmins(){
+        return ResponseEntity.ok(authRepo.findByRole(UserEntity.Role.ADMIN));
 
     }
     public UserEntity findUserByEmail(String email){

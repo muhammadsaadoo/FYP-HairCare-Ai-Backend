@@ -58,10 +58,11 @@ public class ProductEntity {
     }
 
 
-    @Column
+    @Column(nullable = false)
     private String imagePath;
 
-    @Column
+
+    @Column(nullable = true)
     List<String> comments=new ArrayList<>();
 
 

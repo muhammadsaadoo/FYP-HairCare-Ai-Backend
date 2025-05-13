@@ -27,33 +27,25 @@ public class AdminUsersController {
     @Autowired
     private UserDashboardService userDashboardService;
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>>getAdminDashboardDataForUsers(){
-        Map<String, Object> userData=userDashboardService.getUserDashboardData();
-        return ResponseEntity.ok(userData);
-
-    }
+//    @GetMapping
+//    public ResponseEntity<Map<String, Object>>getAdminDashboardDataForUsers(){
+//        Map<String, Object> userData=userDashboardService.getUserDashboardData();
+//        return ResponseEntity.ok(userData);
+//
+//    }
 
     @GetMapping("/allusers")
-    public Object getAlUser() {
-        System.out.println("users call");
-        List<UserEntity> entries = adminUserService.getAllUsers();
-        if ( entries !=null && !entries.isEmpty() ) {
-            return entries;
-        } else {
-            return "no user found";
-        }
+    public ResponseEntity<List<UserEntity>> getAlUser() {
+         return adminUserService.getAllUsers();
+
     }
     @GetMapping("/allAdmins")
-    public Object allAdmins() {
+    public ResponseEntity<List<UserEntity>> allAdmins() {
 
-        List<UserEntity> entries = adminUserService.getAllAdmins();
-        if ( entries !=null && !entries.isEmpty() ) {
-            return entries;
-        } else {
-            return "no user found";
-        }
+        return adminUserService.getAllAdmins();
+
     }
+
     @GetMapping("/getuserbyemail/{email}")
     public Object getUserByEmail(@PathVariable String email) {
         UserEntity user = adminUserService.findUserByEmail(email);
