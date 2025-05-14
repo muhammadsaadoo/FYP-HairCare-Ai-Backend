@@ -4,6 +4,7 @@ package fyp.haircareAi.backend.admin.adminServices;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,25 +16,35 @@ public class AssignRolesService {
     private AuthRepo authRepo;
 
 
-    public UserEntity assignAsAdmin(String email){
-        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
+    public ResponseEntity<UserEntity> assignAsAdmin(String email){
+        try {
+            Optional<UserEntity> dbuser = authRepo.findByEmail(email);
 
-        if(dbuser.isPresent()){
-            UserEntity user=dbuser.get();
-            user.setRole(UserEntity.Role.valueOf("ADMIN"));
-           return authRepo.save(user);
+            if (dbuser.isPresent()) {
+                UserEntity user = dbuser.get();
+                user.setRole(UserEntity.Role.valueOf("ADMIN"));
+                return ResponseEntity.ok(authRepo.save(user));
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        return null;
     }
 
-    public UserEntity deAssignAdmin(String email){
-        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
+    public ResponseEntity<UserEntity> deAssignAdmin(String email){
+        try {
+            Optional<UserEntity> dbuser = authRepo.findByEmail(email);
 
-        if(dbuser.isPresent()){
-            UserEntity user=dbuser.get();
-            user.setRole(UserEntity.Role.valueOf("USER"));
-            return authRepo.save(user);
+            if (dbuser.isPresent()) {
+                UserEntity user = dbuser.get();
+                user.setRole(UserEntity.Role.valueOf("USER"));
+                return ResponseEntity.ok(authRepo.save(user));
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        return null;
     }
+
+
 }

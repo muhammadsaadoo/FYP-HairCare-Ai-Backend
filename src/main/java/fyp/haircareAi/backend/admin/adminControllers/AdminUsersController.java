@@ -34,11 +34,14 @@ public class AdminUsersController {
 //
 //    }
 
+//get all users
     @GetMapping("/allusers")
     public ResponseEntity<List<UserEntity>> getAlUser() {
          return adminUserService.getAllUsers();
 
     }
+
+//get all admins
     @GetMapping("/allAdmins")
     public ResponseEntity<List<UserEntity>> allAdmins() {
 
@@ -46,16 +49,14 @@ public class AdminUsersController {
 
     }
 
+//get user by email
     @GetMapping("/getuserbyemail/{email}")
-    public Object getUserByEmail(@PathVariable String email) {
-        UserEntity user = adminUserService.findUserByEmail(email);
-        if ( user !=null) {
-            return user;
-        } else {
-            return "no user found of email :"+email;
-        }
+    public ResponseEntity<UserEntity> getUserByEmail(@PathVariable String email) {
+        return adminUserService.findUserByEmail(email);
     }
 
+
+//banuser by id
     @DeleteMapping("/banuserbyid/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
 
@@ -63,25 +64,29 @@ public class AdminUsersController {
 
     }
 
-    @GetMapping("/activeusers")
-    public List<UserEntity> getAllActiveUsers() {
-        return adminUserService.activeUsers();
 
-    }
+////get active users
+//    @GetMapping("/activeusers")
+//    public List<UserEntity> getAllActiveUsers() {
+//        return adminUserService.activeUsers();
+//
+//    }
 
+//single user analysis results
     @GetMapping("/analysis_results/{userid}")
     public ResponseEntity<List<HairAnalysisEntity>> gethairAnalysisofUser(@PathVariable int userid ) {
 
         return adminUserService.getAnalysis(userid);
 
     }
+//single users reports
     @GetMapping("/report/{userid}")
     public ResponseEntity<List<ReportEntity>> getReportofUser(@PathVariable int userid ) {
 
         return adminUserService.getReport(userid);
 
     }
-
+//single user feed back
     @GetMapping("/feedback/{userid}")
     public ResponseEntity<List<FeedbackEntity>> getFeedbackofUser(@PathVariable int userid ) {
 

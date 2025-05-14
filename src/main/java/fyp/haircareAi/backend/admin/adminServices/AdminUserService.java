@@ -45,8 +45,7 @@ public class AdminUserService{
             userCache.getAllUsers();
             return ResponseEntity.ok(userCache.getUsers());
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return (ResponseEntity<List<UserEntity>>) ResponseEntity.internalServerError();
         }
 
     }
@@ -54,10 +53,18 @@ public class AdminUserService{
         return ResponseEntity.ok(authRepo.findByRole(UserEntity.Role.ADMIN));
 
     }
-    public UserEntity findUserByEmail(String email){
-        Optional<UserEntity> dbuser= authRepo.findByEmail(email);
+    public ResponseEntity<UserEntity> findUserByEmail(String email){
+        try {
+            Optional<UserEntity> dbuser = authRepo.findByEmail(email);
+            if(dbuser.isEmpty()){
+             return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(dbuser.get());
 
-        return dbuser.orElse(null);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
 
     }
 //    public ResponseEntity<?> deleteUser(String email){
@@ -91,34 +98,34 @@ public class AdminUserService{
     }
 
 
-    public List<UserEntity> activeUsers() {
-        // Retrieve all users
-        List<UserEntity> users = getAllUsers();
-        List<UserEntity> activeUsers = new ArrayList<>();
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        for (UserEntity user : users) {
-            LocalDateTime lastActiveTime = user.getLastLogin(); // Get the last login timestamp
-
-            // Check if the user has been active within the last 24 hours or is explicitly marked as "Active"
-//            if (user.getStatus().equals(UserEntity.Status.Active) &&
-//                    (lastActiveTime != null && Duration.between(lastActiveTime, currentTime).toHours() <= 24)) {
-//                activeUsers.add(user); // Add to active users list
-//            } else {
-//                // Mark user as inactive if not active within 24 hours or not explicitly "Active"
-//                user.setStatus(UserEntity.Status.InActive);
+//    public List<UserEntity> activeUsers() {
+//        // Retrieve all users
+//        List<UserEntity> users = getAllUsers();
+//        List<UserEntity> activeUsers = new ArrayList<>();
+//        LocalDateTime currentTime = LocalDateTime.now();
+//
+//        for (UserEntity user : users) {
+//            LocalDateTime lastActiveTime = user.getLastLogin(); // Get the last login timestamp
+//
+//            // Check if the user has been active within the last 24 hours or is explicitly marked as "Active"
+////            if (user.getStatus().equals(UserEntity.Status.Active) &&
+////                    (lastActiveTime != null && Duration.between(lastActiveTime, currentTime).toHours() <= 24)) {
+////                activeUsers.add(user); // Add to active users list
+////            } else {
+////                // Mark user as inactive if not active within 24 hours or not explicitly "Active"
+////                user.setStatus(UserEntity.Status.InActive);
+////            }
+//            if(user.getStatus().equals(UserEntity.Status.Active)){
+//                activeUsers.add(user);
 //            }
-            if(user.getStatus().equals(UserEntity.Status.Active)){
-                activeUsers.add(user);
-            }
-
-            // Persist changes (status update) in the database
-//            signUpRepo.save(user);
-        }
-
-        // Return the list of active users
-        return activeUsers;
-    }
+//
+//            // Persist changes (status update) in the database
+////            signUpRepo.save(user);
+//        }
+//
+//        // Return the list of active users
+//        return activeUsers;
+//    }
 
 
     public void userDashboard(){

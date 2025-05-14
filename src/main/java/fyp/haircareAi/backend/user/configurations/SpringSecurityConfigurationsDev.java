@@ -72,6 +72,8 @@ public class SpringSecurityConfigurationsDev {
 //                        .requestMatchers("/admin/dashboard/usersdashboard/**",
 //                                "/admin/dashboard/productdashboard/**",
 //                                "/admin/roles/**",
+//                                "/admin/feedback/**",
+//                                "/admin/reports/**",
 //                                "/insertproduct").hasRole("ADMIN") // Added /insertproduct here
 //                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
 //                        // Any other request must be authenticated

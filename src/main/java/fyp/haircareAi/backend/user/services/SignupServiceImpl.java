@@ -95,14 +95,15 @@ public class SignupServiceImpl implements SignUpService {
 
             try {
                 Optional<BanUserEntity> isban=banUserRepo.findByEmail(user.getEmail());
-                Optional<UserEntity> user_in_db=authRepo.findByEmail(user.getEmail());
-
                 if(isban.isPresent()){
 //                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();    main
                     return ResponseEntity
                             .status(HttpStatus.UNAUTHORIZED)
                             .body("the Email " + user.getEmail() + " is BAN");
                 }
+                Optional<UserEntity> user_in_db=authRepo.findByEmail(user.getEmail());
+
+
                 if(user_in_db.isPresent()){
 //                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();    main
                     return ResponseEntity

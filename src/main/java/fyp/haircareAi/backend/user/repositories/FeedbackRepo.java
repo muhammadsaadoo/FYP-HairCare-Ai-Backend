@@ -11,4 +11,5 @@ import java.util.List;
 public interface FeedbackRepo extends JpaRepository<FeedbackEntity,Long> {
 //    List<HairAnalysisEntity> findByUserUserId(Long userId);
 List<FeedbackEntity> findByUserId(long userId);
+
 }

@@ -1,6 +1,7 @@
 package fyp.haircareAi.backend.admin.adminControllers;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fyp.haircareAi.backend.admin.adminServices.AdminUserService;
 
 import fyp.haircareAi.backend.admin.adminServices.ImageService;
@@ -43,14 +44,24 @@ public class AdminProductController {
 //    }
 
 //add product
-    @PostMapping(value = "/insertproduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductEntity> addProduct(
-            @RequestPart("product") ProductEntity product,
-            @RequestPart("imageFile") MultipartFile imageFile
-    ) {
-             return productDashboardService.addProductInDb(product, imageFile);
+@PostMapping(value = "/insertproduct", consumes = {"multipart/form-data"})
+public ResponseEntity<?> insertProduct(
+        @RequestPart("product") String productJson,
+        @RequestPart(value = "imageFile", required = false) MultipartFile imageFile
+) {
+    try {
+        // Convert JSON string to ProductEntity
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductEntity product = objectMapper.readValue(productJson, ProductEntity.class);
 
+        // Call service to handle saving
+        return productDashboardService.addProductInDb(product, imageFile);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest().body("Error while processing product: " + e.getMessage());
     }
+}
 
 
 //get all products

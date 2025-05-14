@@ -27,3 +27,20 @@ latest: digest: sha256:108fd6c637b1097fd88b09a402558190dff2f652d8df89418aae95f9a
 
 cache clean
 ./mvnw clean spring-boot:build-image -Dspring-boot.build-image.imageName=muhammadsaadoo/haircareai_backend_docker_image
+
+
+backend
+database->postgresql
+create db tables using ORM with spring data jpa
+framework-->spring bootwith three tier archtecture
+registration with email verification using redis cloud
+authentication and authorization using jwt
+OAuth2 with google
+admin panel
+    manage users,products,feedbacks,reports
+user profile
+user can add feedback and report and upload profile image
+
+
+
+
