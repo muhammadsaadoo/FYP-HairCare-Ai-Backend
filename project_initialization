@@ -1,0 +1,8 @@
+install jdk in windows
+    if already have jdk folder
+    set the enviournment variables
+         JAVA_HOME in system variables and give path to jdk folder
+         edit path variable and add bin of jdk path to variable
+         check version java -version and javac -version
+
+

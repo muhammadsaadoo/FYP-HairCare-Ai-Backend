@@ -2,6 +2,11 @@ HELP.md
 
 !.mvn/wrapper/maven-wrapper.jar
 
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
+src/main/resources/docker-compose.yml
+src/main/resources/application.properties
+
 ### STS ###
 .apt_generated
 .classpath
