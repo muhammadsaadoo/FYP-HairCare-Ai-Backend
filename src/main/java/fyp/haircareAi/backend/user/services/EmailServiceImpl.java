@@ -2,16 +2,19 @@ package fyp.haircareAi.backend.user.services;
 
 import fyp.haircareAi.backend.user.services.interfaces.EmailService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 
-@Slf4j
+
 @Service
 public class EmailServiceImpl implements EmailService {
-//java mail sender interface use
+    private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
+    //java mail sender interface use
     @Autowired
     private JavaMailSender javaMailSender;
 //    JavaMailSender javaMailSender= new JavaMailSender() {
@@ -51,6 +54,7 @@ public class EmailServiceImpl implements EmailService {
         }
         catch (Exception e) {
             log.error("exception while sending email",e);
+
             return false;
         }
 
