@@ -17,6 +17,7 @@ public class HairAnalysisEntity {
     private Long analysisId;
 
 
+    @Column
     private long userId; // One user can have multiple hair analyses
 
     @Column(name = "created_at", nullable = false, updatable = false)

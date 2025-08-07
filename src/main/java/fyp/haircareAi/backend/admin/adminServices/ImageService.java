@@ -38,7 +38,7 @@ public class ImageService {
             }
 
 
-            this.imagePath =filePath.toString();
+            this.imagePath = filePath.toString().replace("\\", "/");
             return this.imagePath;
 
 

@@ -1,6 +1,8 @@
 package fyp.haircareAi.backend.user.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fyp.haircareAi.backend.user.utils.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,25 +14,20 @@ import fyp.haircareAi.backend.user.services.HairAnalysisService;
 @RequestMapping("/hair-analysis")
 public class HairAnalysisController {
 
-    private final HairAnalysisService hairAnalysisService;
-    private final ObjectMapper objectMapper; // To convert JSON string to Java object
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    public HairAnalysisController(HairAnalysisService hairAnalysisService, ObjectMapper objectMapper) {
-        this.hairAnalysisService = hairAnalysisService;
-        this.objectMapper = objectMapper;
-    }
+    @Autowired
+    private HairAnalysisService hairAnalysisService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addAnalysis(
-            @RequestPart("analysisResult") String analysisResultJson,
-            @RequestPart("imageFile") MultipartFile imageFile
-    ) {
-        try {
-            // Convert JSON string to Java object
-            HairAnalysisEntity analysis = objectMapper.readValue(analysisResultJson, HairAnalysisEntity.class);
-            return hairAnalysisService.insertAnalysis(analysis, imageFile);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Invalid request: " + e.getMessage());
-        }
+    @PostMapping(value = "/analyseHair", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> analyseImage(
+            @RequestHeader("Authorization") String token,
+            @RequestPart("imageFile") MultipartFile imageFile){
+
+        String emil=jwtUtil.extractUsername(token.substring(7).trim());
+        return hairAnalysisService.analyseHair(imageFile,emil);
+
+
     }
 }

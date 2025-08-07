@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.services;
 
+import fyp.haircareAi.backend.admin.adminServices.ImageService;
 import fyp.haircareAi.backend.dto.HairAnalysisRequest;
 import fyp.haircareAi.backend.user.entities.HairAnalysisEntity;
 import fyp.haircareAi.backend.user.entities.ProblemEntity;
@@ -10,6 +11,7 @@ import fyp.haircareAi.backend.user.repositories.ProblemRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class HairAnalysisService {
 
     @Value("${spring.image.storage.path}")
     private String storagePath;
+    @Autowired
+    private ImageService imageService;
 
 
 
@@ -46,42 +50,30 @@ public class HairAnalysisService {
 //
 //    }
 
-    public ResponseEntity<byte[]> insertAnalysis(HairAnalysisEntity analysisResult, MultipartFile image){
+    public  ResponseEntity<?> analyseHair(MultipartFile hairImage,String email) {
 
         try {
-            File directory=new File(storagePath);
-            if(!directory.exists()){
-                directory.mkdir();
-            }
+            Optional<UserEntity> user = authRepo.findByEmail(email);
+            UserEntity getUser = user.get();
 
-            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            Path filePath= Paths.get(storagePath,fileName);
-            Files.write(filePath,image.getBytes());
+//        send image to ai
+            HairAnalysisEntity hair_nalysis = new HairAnalysisEntity();
+            hair_nalysis.setUserId(getUser.getUserId());
+            hair_nalysis.setProblem("Alopecia");
+            hair_nalysis.setImagePath(imageService.insertImage(hairImage));
+            hair_nalysis.setRecommendedProduct("Mielle");
 
-            String contentType = image.getContentType();
-            if (contentType == null) { // If content type is null, use a default
-                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-            }
-
-
-            analysisResult.setImagePath(filePath.toString());
-
-            analysisRepo.save(analysisResult);
-
-
-            byte[] imageBytes = Files.readAllBytes(filePath);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .contentType(MediaType.parseMediaType(contentType)) // Adjust this to match the actual image type
-                    .body(imageBytes);
-
-
-
+            analysisRepo.save(hair_nalysis);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(hair_nalysis);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
 
+
+
     }
+
 }

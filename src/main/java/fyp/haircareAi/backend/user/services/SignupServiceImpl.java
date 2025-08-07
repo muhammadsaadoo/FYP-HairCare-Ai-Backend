@@ -1,5 +1,6 @@
 package fyp.haircareAi.backend.user.services;
 
+import fyp.haircareAi.backend.dto.AuthResponse;
 import fyp.haircareAi.backend.dto.EmailVerificationRequest;
 import fyp.haircareAi.backend.user.entities.BanUserEntity;
 import fyp.haircareAi.backend.user.entities.ProductEntity;
@@ -7,6 +8,7 @@ import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.SignUpService;
+import fyp.haircareAi.backend.user.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -42,6 +44,11 @@ public class SignupServiceImpl implements SignUpService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    String jwtToken;
+
     private static final long EXPIRATION_TIME = 5;
 
 
@@ -70,10 +77,13 @@ public class SignupServiceImpl implements SignUpService {
                 UserEntity dbuser=user.get();
 //                dbuser.setVerify(UserEntity.IsVerified.verified);
                 dbuser.setVerify(true);
-                authRepo.save(dbuser);
-                return ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(email_verification.getEmail()+"    verification successfull");
+                UserEntity saveduser=authRepo.save(dbuser);
+//                return ResponseEntity
+//                        .status(HttpStatus.CREATED)
+//                        .body(email_verification.getEmail()+"    verification successfull");
+                // Generate JWT with username and roles
+               jwtToken= jwtUtil.generateToken(saveduser.getEmail(), saveduser.getRole().toString());
+                return ResponseEntity.ok(new AuthResponse(jwtToken, dbuser));
             }
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -104,12 +114,12 @@ public class SignupServiceImpl implements SignUpService {
                 Optional<UserEntity> user_in_db=authRepo.findByEmail(user.getEmail());
 
 
-                if(user_in_db.isPresent()){
-//                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();    main
-                    return ResponseEntity
-                            .status(HttpStatus.BAD_REQUEST)
-                            .body( user.getEmail()+" already exist ");
-                }
+//                if(user_in_db.isPresent()){
+////                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();    main
+//                    return ResponseEntity
+//                            .status(HttpStatus.BAD_REQUEST)
+//                            .body( user.getEmail()+" already exist ");
+//                }
                 user.setPassword(passwordencoder.encode(user.getPassword()));
                 UserEntity is_add = authRepo.save(user);
 
@@ -118,11 +128,14 @@ public class SignupServiceImpl implements SignUpService {
                     //save verification code in redis cloud
                     Random random = new Random();
                     String verificationCode = String.valueOf(1000 + random.nextInt(9000));
+                    System.out.println(verificationCode);
                     if(emailService.sendEnail(user.getEmail(),"HairCare Ai","Your verification code is "+verificationCode)){
 
                         try {//store verification code in redis cloud
                             redisTemplate.opsForValue().set(user.getEmail(), verificationCode, EXPIRATION_TIME, TimeUnit.MINUTES);
-                            return ResponseEntity.ok(user);
+                            return ResponseEntity
+                                    .status(HttpStatus.CREATED)
+                                    .body( user.getEmail() +" registered successfully"+"  verification code is  "+  verificationCode);
                         } catch (Exception e) {
                             System.out.println(e);
                             return ResponseEntity.internalServerError().build();
