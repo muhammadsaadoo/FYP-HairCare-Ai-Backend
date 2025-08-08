@@ -1,13 +1,18 @@
 package fyp.haircareAi.backend.user.services;
 
 import fyp.haircareAi.backend.dto.AuthResponse;
+import fyp.haircareAi.backend.dto.EmailVerificationRequest;
+import fyp.haircareAi.backend.user.entities.BanUserEntity;
 import fyp.haircareAi.backend.user.entities.LoginEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
+import fyp.haircareAi.backend.user.repositories.BanUserRepo;
 import fyp.haircareAi.backend.user.services.interfaces.LoginService;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,14 +23,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+
 
 @Slf4j
 @Service
 public class LoginServiceImpl implements LoginService {
+    private static final long EXPIRATION_TIME = 5;
 
     @Autowired
     private AuthRepo authRepo;
@@ -40,6 +53,16 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private EmailServiceImpl emailService;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private BanUserRepo banUserRepo;
+    String jwtToken;
 
     @Override
     public ResponseEntity<?> checkUser(LoginEntity user){
@@ -79,6 +102,112 @@ public class LoginServiceImpl implements LoginService {
             log.error("Exception occurred while creating authentication token", e);
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    public ResponseEntity<?> sendCodeForForgotPassword(String email){
+        try {
+            Optional<BanUserEntity> isban=banUserRepo.findByEmail(email);
+            if(isban.isPresent()){
+//                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();    main
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body("the Email " + email + " is BAN");
+            }
+            Optional<UserEntity> user_in_db=authRepo.findByEmail(email);
+
+
+                if(user_in_db.isPresent()){
+//
+            // You can add custom logic if needed
+
+                //save verification code in redis cloud
+                Random random = new Random();
+                String verificationCode = String.valueOf(1000 + random.nextInt(9000));
+                System.out.println(verificationCode);
+                if(emailService.sendEnail(email,"HairCare Ai","Your verification code is "+verificationCode)){
+
+                    try {//store verification code in redis cloud
+                        redisTemplate.opsForValue().set(email, verificationCode, EXPIRATION_TIME, TimeUnit.MINUTES);
+                        return ResponseEntity
+                                .status(HttpStatus.CREATED)
+                                .body( email +"  verification code is  "+  verificationCode);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                        return ResponseEntity.internalServerError().build();
+                    }
+                }
+                return ResponseEntity.internalServerError().build();
+            } else {
+                // Handle the case where the user could not be added
+                return ResponseEntity.internalServerError().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+
+
+    }
+
+    public ResponseEntity<?> verifyEmailForForgotPassword(EmailVerificationRequest email_verification, BindingResult result) {
+        // Check for validation errors
+        try {
+            if (result.hasErrors()) {
+                // Return validation errors (you can customize this)
+                return (ResponseEntity<?>) result.getFieldErrors().stream()
+                        .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                        .toList();
+            }
+
+            Optional<UserEntity> user=authRepo.findByEmail(email_verification.getEmail());
+            if(user.isEmpty()){
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(email_verification.getEmail()+"    user not found");
+            }
+            //verify using code
+            String storedCode = redisTemplate.opsForValue().get(email_verification.getEmail());
+            if (storedCode != null && storedCode.equals(email_verification.getVerificationCode())) {
+                // If verified, remove the code from Redis
+                redisTemplate.delete(email_verification.getEmail());
+                UserEntity dbuser=user.get();
+//
+
+                // Generate JWT with username and roles
+                jwtToken= jwtUtil.generateToken(dbuser.getEmail(), dbuser.getRole().toString());
+                Map<String, String> response = new HashMap<>();
+                response.put("token", jwtToken);
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("verification code is incorrect");
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Exception occured");
+        }
+    }
+
+    public ResponseEntity<?> updatePassword(String email,String password){
+       try {
+           Optional<UserEntity> optionalUser=authRepo.findByEmail(email);
+           if(optionalUser.isPresent()){
+               UserEntity user=optionalUser.get();
+               user.setPassword(passwordEncoder.encode(password));
+               authRepo.save(user);
+               return ResponseEntity.ok(user);
+           }
+           return ResponseEntity.internalServerError().build();
+
+       } catch (Exception e) {
+           return ResponseEntity.internalServerError().build();
+       }
+
     }
 }
 
