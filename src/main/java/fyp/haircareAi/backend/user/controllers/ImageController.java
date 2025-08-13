@@ -30,7 +30,7 @@ public class ImageController {
     }
 
     @PostMapping(value = "/uploadImage", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> uploadImage(
+    public ResponseEntity<?> uploadProfileImage(
             @RequestHeader("Authorization") String token,
             @RequestPart("imageFile") MultipartFile imageFile) {
 
@@ -51,6 +51,8 @@ public class ImageController {
             return ResponseEntity.badRequest().body("Error while uploading image: " + e.getMessage());
         }
     }
+
+
 
 //    @PostMapping("/Uploadprofileimage")
 //    public ResponseEntity<byte[]> getUserImage(

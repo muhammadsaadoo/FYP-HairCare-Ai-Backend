@@ -1,6 +1,7 @@
 package fyp.haircareAi.backend.user.services;
 
 import fyp.haircareAi.backend.admin.adminServices.ImageService;
+import fyp.haircareAi.backend.dto.UpdateUserDto;
 import fyp.haircareAi.backend.user.entities.FeedbackEntity;
 import fyp.haircareAi.backend.user.entities.ProductEntity;
 import fyp.haircareAi.backend.user.entities.ReportEntity;
@@ -33,6 +34,7 @@ public class UserService {
     @Value("${spring.image.storage.path}")
     private String storagePath;
 
+
     @Autowired
     private AuthRepo authRepo;
     @Autowired
@@ -45,6 +47,8 @@ public class UserService {
     private FeedbackRepo feedbackRepo;
     @Autowired
     private ImageService imageService;
+
+    UserEntity user;
 
     public ResponseEntity<?> insertImage(String email, MultipartFile image){
 
@@ -70,6 +74,22 @@ public class UserService {
 
 
             UserEntity user=oprionaluser.get();
+            String oldImagePath = user.getImagePath();
+            if (oldImagePath != null && !oldImagePath.isEmpty()) {
+                try {
+                    File oldFile = new File(oldImagePath);
+                    if (oldFile.exists()) {
+                        boolean deleted = oldFile.delete();
+                        if (!deleted) {
+                            System.err.println("Failed to delete old image: " + oldImagePath);
+                        }
+                    }
+                } catch (Exception e) {
+                    return ResponseEntity
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("error while deleting previous image");
+                }
+            }
             user.setImagePath(filePath);
 
             authRepo.save(user);
@@ -119,6 +139,30 @@ public class UserService {
 
 
     }
+
+    public ResponseEntity<?> updateUser(UpdateUserDto newUser, String email) {
+        try {
+            Optional<UserEntity> optionalUser = authRepo.findByEmail(email);
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+            }
+            UserEntity oldUser = optionalUser.get();
+            oldUser.setFirst_name(newUser.getFirst_name());
+            oldUser.setLast_name(newUser.getLast_name());
+            oldUser.setGender(newUser.getGender());
+            oldUser.setAge(newUser.getAge());
+            oldUser.setCountry(newUser.getCountry());
+
+            this.user=authRepo.save(oldUser);
+            return ResponseEntity.ok(this.user);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("error while update user");
+        }
+
+
+    }
+
 
 
 

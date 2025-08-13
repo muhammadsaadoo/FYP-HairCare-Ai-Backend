@@ -1,7 +1,9 @@
 package fyp.haircareAi.backend.user.controllers;
 
+import fyp.haircareAi.backend.dto.UpdateUserDto;
 import fyp.haircareAi.backend.user.entities.FeedbackEntity;
 import fyp.haircareAi.backend.user.entities.ReportEntity;
+import fyp.haircareAi.backend.user.entities.UserEntity;
 import fyp.haircareAi.backend.user.services.HairAnalysisService;
 import fyp.haircareAi.backend.user.services.UserDetailServiceImpl;
 import fyp.haircareAi.backend.user.services.UserService;
@@ -58,6 +60,18 @@ public class UserDetailsController {
 
 
         return  userService.insertfeedback(token,feedback);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> updateUserDetails(
+            @RequestBody UpdateUserDto user,
+            @RequestHeader("Authorization") String token
+    ){
+        String emil=jwtUtil.extractUsername(token.substring(7).trim());
+//        return signupService.insertUser(user);
+        return userService.updateUser(user,emil);
+
+
     }
 
 

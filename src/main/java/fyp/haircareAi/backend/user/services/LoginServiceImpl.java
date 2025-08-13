@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -74,6 +75,7 @@ public class LoginServiceImpl implements LoginService {
             );
 
 
+
             // Get UserDetails
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
@@ -98,10 +100,20 @@ public class LoginServiceImpl implements LoginService {
 
 
 
+        } catch (BadCredentialsException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Bad credentials");
         } catch (AuthenticationException e) {
-            log.error("Exception occurred while creating authentication token", e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Authentication failed");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong");
         }
+
     }
 
     public ResponseEntity<?> sendCodeForForgotPassword(String email){
