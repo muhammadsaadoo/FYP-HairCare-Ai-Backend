@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/Image")
+@RequestMapping("/image")
 public class ImageController {
 
     @Autowired
@@ -29,8 +29,35 @@ public class ImageController {
          return imageService.getImage(imagePath);
     }
 
-    @PostMapping(value = "/uploadImage", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/upload" +
+            "Image", consumes = {"multipart/form-data"})
     public ResponseEntity<?> uploadProfileImage(
+            @RequestHeader("Authorization") String token,
+            @RequestPart("imageFile") MultipartFile imageFile) {
+
+        System.out.println("errroorrrrrrrrrrrrrrrrrrrrrrrrrrr");
+
+        try {
+            if (imageFile == null || imageFile.isEmpty()) {
+                return ResponseEntity.badRequest().body("Image file is missing");
+            }
+            String emil=jwtUtil.extractUsername(token.substring(7).trim());
+            System.out.println(emil);
+            return userService.insertImage(emil,imageFile);
+
+            // Handle image saving logic (e.g., to DB, file system, or cloud storage)
+//            String imageUrl = imageService.insertImage(imageFile); // hypothetical method
+
+//            return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Error while uploading image: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/uploadHairImage" +
+            "Image", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> uploadHairImage(
             @RequestHeader("Authorization") String token,
             @RequestPart("imageFile") MultipartFile imageFile) {
 
@@ -40,7 +67,7 @@ public class ImageController {
             }
             String emil=jwtUtil.extractUsername(token.substring(7).trim());
             System.out.println(emil);
-            return userService.insertImage(emil,imageFile);
+            return userService.AnalyseImage(emil,imageFile);
 
             // Handle image saving logic (e.g., to DB, file system, or cloud storage)
 //            String imageUrl = imageService.insertImage(imageFile); // hypothetical method

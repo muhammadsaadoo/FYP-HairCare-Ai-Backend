@@ -2,12 +2,10 @@ package fyp.haircareAi.backend.user.services;
 
 import fyp.haircareAi.backend.admin.adminServices.ImageService;
 import fyp.haircareAi.backend.dto.UpdateUserDto;
-import fyp.haircareAi.backend.user.entities.FeedbackEntity;
-import fyp.haircareAi.backend.user.entities.ProductEntity;
-import fyp.haircareAi.backend.user.entities.ReportEntity;
-import fyp.haircareAi.backend.user.entities.UserEntity;
+import fyp.haircareAi.backend.user.entities.*;
 import fyp.haircareAi.backend.user.repositories.AuthRepo;
 import fyp.haircareAi.backend.user.repositories.FeedbackRepo;
+import fyp.haircareAi.backend.user.repositories.HairImagesRepo;
 import fyp.haircareAi.backend.user.repositories.ReportRepo;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
 import org.apache.catalina.mbeans.SparseUserDatabaseMBean;
@@ -25,6 +23,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -47,6 +47,12 @@ public class UserService {
     private FeedbackRepo feedbackRepo;
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private HairImagesRepo hairImagesRepo;
+
+
+
 
     UserEntity user;
 
@@ -162,6 +168,63 @@ public class UserService {
 
 
     }
+
+
+    public ResponseEntity<?> AnalyseImage(String email, MultipartFile image){
+
+        try {
+            Optional<UserEntity> optionalUser = authRepo.findByEmail(email);
+            if(optionalUser.isEmpty()){
+                System.out.println("User not found");
+                return ResponseEntity.notFound().build();
+            }
+
+            String filePath = imageService.insertImage(image);
+            System.out.println("Image inserted");
+
+            // Generate AI analysis
+            MedicalDiagnosisService medicalDiagnosisService = new MedicalDiagnosisService();
+            String fullResult = medicalDiagnosisService.AI(image);
+            System.out.println("Result generated");
+
+            // Option 1: Truncate result to fit VARCHAR(255)
+            String shortenedResult = truncateResult(fullResult, 250); // Leave some buffer
+
+            // Option 2: Store just the diagnosis name
+            // String shortenedResult = "Male Pattern Baldness - Full analysis available";
+
+            UserEntity user = optionalUser.get();
+            HairImageEntity hairImageEntity = new HairImageEntity();
+            hairImageEntity.setUserId(user.getUserId());
+            hairImageEntity.setImagePath(filePath);
+            hairImageEntity.setResult(shortenedResult); // Use shortened version
+
+            hairImagesRepo.save(hairImageEntity);
+
+            // Return the full result in response even if we store shortened version
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", hairImageEntity.getImageId());
+            response.put("userId", hairImageEntity.getUserId());
+            response.put("imagePath", hairImageEntity.getImagePath());
+            response.put("fullResult", fullResult); // Full result in response
+            response.put("createdAt", hairImageEntity.getCreatedAt());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Helper method to truncate result
+    private String truncateResult(String result, int maxLength) {
+        if (result.length() <= maxLength) {
+            return result;
+        }
+        return result.substring(0, maxLength - 3) + "...";
+    }
+
 
 
 

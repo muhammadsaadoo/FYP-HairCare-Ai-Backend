@@ -38,6 +38,6 @@ public class ReportEntity {
     private FeedbackEntity.Type type;
 
     public enum Type {
-        Product, AI, App
+       AI, App
     }
 }

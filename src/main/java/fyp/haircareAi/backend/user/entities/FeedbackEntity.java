@@ -29,9 +29,7 @@ public class FeedbackEntity {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Column
-    private Long referenceId;
-    // Links to Products or HairAnalysis
+
     @Column
     private Integer rating;
 
@@ -42,7 +40,7 @@ public class FeedbackEntity {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public enum Type {
-        Product, AI, App
+        AI, App
     }
 
 
