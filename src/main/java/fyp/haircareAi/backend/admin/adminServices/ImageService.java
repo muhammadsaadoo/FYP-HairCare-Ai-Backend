@@ -52,6 +52,7 @@ public class ImageService {
     public ResponseEntity<byte[]> getImage(String imagePath) {
         try {
             Path filePath = Paths.get(imagePath);
+            System.out.println(filePath);
 
             if (!Files.exists(filePath)) {
                 return ResponseEntity.notFound().build();

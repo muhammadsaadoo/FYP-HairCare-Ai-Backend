@@ -26,8 +26,9 @@ public class ReportsController {
 //get all feedbacks
 @GetMapping("/allReports")
 public ResponseEntity<List<ReportEntity>> getAlreports() {
+    System.out.println("reportttttttt");
 
-    return adminReportsService.getAllFeedback();
+    return adminReportsService.getAllReports();
 
 }
 

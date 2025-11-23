@@ -35,7 +35,7 @@ public class ImageController {
             @RequestHeader("Authorization") String token,
             @RequestPart("imageFile") MultipartFile imageFile) {
 
-        System.out.println("errroorrrrrrrrrrrrrrrrrrrrrrrrrrr");
+
 
         try {
             if (imageFile == null || imageFile.isEmpty()) {

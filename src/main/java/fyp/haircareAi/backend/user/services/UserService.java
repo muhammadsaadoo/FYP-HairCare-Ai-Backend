@@ -3,10 +3,7 @@ package fyp.haircareAi.backend.user.services;
 import fyp.haircareAi.backend.admin.adminServices.ImageService;
 import fyp.haircareAi.backend.dto.UpdateUserDto;
 import fyp.haircareAi.backend.user.entities.*;
-import fyp.haircareAi.backend.user.repositories.AuthRepo;
-import fyp.haircareAi.backend.user.repositories.FeedbackRepo;
-import fyp.haircareAi.backend.user.repositories.HairImagesRepo;
-import fyp.haircareAi.backend.user.repositories.ReportRepo;
+import fyp.haircareAi.backend.user.repositories.*;
 import fyp.haircareAi.backend.user.utils.JwtUtil;
 import org.apache.catalina.mbeans.SparseUserDatabaseMBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,17 +47,17 @@ public class UserService {
 
     @Autowired
     private HairImagesRepo hairImagesRepo;
-
-
+    @Autowired
+    private UserPrimaryDetailsRepository userPrimaryDetailsRepository;
 
 
     UserEntity user;
 
-    public ResponseEntity<?> insertImage(String email, MultipartFile image){
+    public ResponseEntity<?> insertImage(String email, MultipartFile image) {
 
         try {
-            Optional<UserEntity> oprionaluser=authRepo.findByEmail(email);
-            if(oprionaluser.isEmpty()){
+            Optional<UserEntity> oprionaluser = authRepo.findByEmail(email);
+            if (oprionaluser.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 //            File directory=new File(storagePath);
@@ -76,10 +73,10 @@ public class UserService {
 //            if (contentType == null) { // If content type is null, use a default
 //                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
 //            }
-            String filePath=imageService.insertImage(image);
+            String filePath = imageService.insertImage(image);
 
 
-            UserEntity user=oprionaluser.get();
+            UserEntity user = oprionaluser.get();
             String oldImagePath = user.getImagePath();
             if (oldImagePath != null && !oldImagePath.isEmpty()) {
                 try {
@@ -108,7 +105,7 @@ public class UserService {
 
     }
 
-    public ResponseEntity<?> insertReport(String token, ReportEntity report){
+    public ResponseEntity<?> insertReport(String token, ReportEntity report) {
 
         try {
 
@@ -117,7 +114,7 @@ public class UserService {
             Optional<UserEntity> optionalUser = authRepo.findByEmail(email);
             report.setUserId(optionalUser.get().getUserId());
             reportRepo.save(report);
-            emailService.sendEnail(email,"Report Recieved","we recieved your report we will try ti resolve it as soon as possible Thanks for your Consideration");
+            emailService.sendEnail(email, "Report Recieved", "we recieved your report we will try ti resolve it as soon as possible Thanks for your Consideration");
             return ResponseEntity.status(HttpStatus.OK).body("report added");
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,7 +123,8 @@ public class UserService {
 
 
     }
-    public ResponseEntity<?> insertfeedback(String token, FeedbackEntity feedback){
+
+    public ResponseEntity<?> insertfeedback(String token, FeedbackEntity feedback) {
 
         try {
 
@@ -140,8 +138,6 @@ public class UserService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("server error");
         }
-
-
 
 
     }
@@ -159,7 +155,7 @@ public class UserService {
             oldUser.setAge(newUser.getAge());
             oldUser.setCountry(newUser.getCountry());
 
-            this.user=authRepo.save(oldUser);
+            this.user = authRepo.save(oldUser);
             return ResponseEntity.ok(this.user);
 
         } catch (Exception e) {
@@ -170,11 +166,11 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> AnalyseImage(String email, MultipartFile image){
+    public ResponseEntity<?> AnalyseImage(String email, MultipartFile image) {
 
         try {
             Optional<UserEntity> optionalUser = authRepo.findByEmail(email);
-            if(optionalUser.isEmpty()){
+            if (optionalUser.isEmpty()) {
                 System.out.println("User not found");
                 return ResponseEntity.notFound().build();
             }
@@ -225,9 +221,23 @@ public class UserService {
         return result.substring(0, maxLength - 3) + "...";
     }
 
+    public ResponseEntity<?> setUserPrimarryDetails(UserPrimaryDetailsEntity user) {
 
-
-
-
-
+        try {
+            userPrimaryDetailsRepository.save(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
+
+
+
+
+
+
+
+
+

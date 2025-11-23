@@ -37,7 +37,7 @@ public class ReportEntity {
     @Enumerated(EnumType.STRING)
     private FeedbackEntity.Type type;
 
-    public enum Type {
-       AI, App
-    }
+//    public enum Type {
+//       AI, App , Product
+//    }
 }

@@ -17,17 +17,17 @@ public class AdminReportsService {
     private ReportRepo reportRepo;
 
 
-    public ResponseEntity<List<ReportEntity>> getAllFeedback(){
+    public ResponseEntity<List<ReportEntity>> getAllReports(){
 
         try {
             List<ReportEntity> list=reportRepo.findAll();
-
 
             if(list.isEmpty()){
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(list);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

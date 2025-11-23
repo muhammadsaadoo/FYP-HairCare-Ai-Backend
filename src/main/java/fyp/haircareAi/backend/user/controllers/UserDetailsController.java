@@ -4,6 +4,7 @@ import fyp.haircareAi.backend.dto.UpdateUserDto;
 import fyp.haircareAi.backend.user.entities.FeedbackEntity;
 import fyp.haircareAi.backend.user.entities.ReportEntity;
 import fyp.haircareAi.backend.user.entities.UserEntity;
+import fyp.haircareAi.backend.user.entities.UserPrimaryDetailsEntity;
 import fyp.haircareAi.backend.user.services.HairAnalysisService;
 import fyp.haircareAi.backend.user.services.UserDetailServiceImpl;
 import fyp.haircareAi.backend.user.services.UserService;
@@ -35,44 +36,45 @@ public class UserDetailsController {
     private HairAnalysisService hairAnalysisService;
 
 
-
     // API to store an image
-
-
-
 
 
     @PostMapping("/report")
     public ResponseEntity<?> addreport(
             @RequestBody ReportEntity report,
             @RequestHeader("Authorization") String token
-    ){
+    ) {
 
 
-        return  userService.insertReport(token,report);
+        return userService.insertReport(token, report);
     }
 
     @PostMapping("/feedback")
     public ResponseEntity<?> addfeedback(
             @RequestBody FeedbackEntity feedback,
             @RequestHeader("Authorization") String token
-    ){
+    ) {
 
 
-        return  userService.insertfeedback(token,feedback);
+        return userService.insertfeedback(token, feedback);
     }
 
     @PostMapping
     public ResponseEntity<?> updateUserDetails(
             @RequestBody UpdateUserDto user,
             @RequestHeader("Authorization") String token
-    ){
-        String emil=jwtUtil.extractUsername(token.substring(7).trim());
+    ) {
+        String emil = jwtUtil.extractUsername(token.substring(7).trim());
 //        return signupService.insertUser(user);
-        return userService.updateUser(user,emil);
+        return userService.updateUser(user, emil);
 
 
     }
 
+    @PostMapping("/UserPrimaryDetails")
+    public ResponseEntity<?> userInitialDetails(@RequestBody UserPrimaryDetailsEntity user) {
+        return userService.setUserPrimarryDetails(user);
 
+
+    }
 }

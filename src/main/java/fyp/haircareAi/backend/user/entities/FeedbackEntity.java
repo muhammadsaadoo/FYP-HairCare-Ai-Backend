@@ -40,7 +40,7 @@ public class FeedbackEntity {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public enum Type {
-        AI, App
+        AI, App , Product
     }
 
 
